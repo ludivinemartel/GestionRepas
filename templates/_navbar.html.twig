@@ -1,0 +1,41 @@
+{% block content %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-danger">
+	<div class="container-fluid">
+		<div class="hstack">
+			<div class="collapse navbar-collapse" id="navbarColor01">
+				<ul class="navbar-nav me-auto">
+					<li class="nav-item">
+						<a class="nav-link" href="{{ path('app_home') }}"> ACCUEIL </a>
+					</li>
+					{% if app.user %} {% if 'ROLE_ADMIN' in app.user.roles %} {% elseif
+					'ROLE_USER' in app.user.roles %}
+					<li class="nav-item">
+						<a class="nav-link" href="#"> TABLEAU DE BORD </a>
+					</li>
+					{% endif %} {% endif %}
+				</ul>
+				<div class="d-flex">
+					<ul class="navbar-nav me-auto">
+						{% if app.user %}
+						<li class="nav-item" style="margin-left: 65rem">
+							<a class="nav-link" href="#"> DECONNEXION </a>
+						</li>
+						{% else %}
+						<li class="nav-item">
+							<a class="nav-link" href="{{ path('security.login') }}"
+								>CONNEXION
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{{ path('security.registration') }}"
+								>INSCRIPTION
+							</a>
+						</li>
+						{% endif %}
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</nav>
+{% endblock %}

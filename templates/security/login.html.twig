@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %} {% block title %} {{ parent() }} - Connexion {%
+endblock title %} {% block body %}
+<div class="container">
+	<h1 class="h3 mb-3 mt-3 font-weight-normal">Connexion</h1>
+
+	{% if error %}
+	<div class="alert alert-danger">
+		{{ error.messageKey|trans(error.messageData, 'security') }}
+	</div>
+	{% endif %} {% for message in app.flashes('success')%}
+	<div class="alert alert-success mt-4">
+		{{ message }}
+	</div>
+	{% endfor %}
+
+	<form action="{{ path('security.login') }}" method="post">
+		<div class="mb-3">
+			<label for="username" class="form-label">Adresse email</label>
+			<input
+				type="email"
+				class="form-control"
+				id="username"
+				name="_username"
+				value="{{ last_username }}"
+			/>
+		</div>
+		<div class="mb-3">
+			<label for="password" class="form-label">Mot de passe</label>
+			<input
+				type="password"
+				class="form-control"
+				id="password"
+				name="_password"
+			/>
+		</div>
+
+		<button type="submit" class="btn btn-info">Se connecter</button>
+	</form>
+	<p>
+		Vous n'avez pas de compte ?
+		<strong
+			><a
+				class="link-offset-2 link-underline link-underline-opacity-0"
+				href="{{ path('security.registration') }}"
+				>S'inscrire</a
+			></strong
+		>
+	</p>
+	<p>
+		Vous avez oublié votre mot de passe ?
+		<strong
+			><a class="link-offset-2 link-underline link-underline-opacity-0" href="#"
+				>Réinitialiser</a
+			></strong
+		>
+	</p>
+</div>
+{% endblock %}
