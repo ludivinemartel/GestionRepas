@@ -1,12 +1,20 @@
-{% extends 'base.html.twig' %} 
-
-{% block title %} {{ parent() }} - Dashboard utilisateur {% endblock title %} 
-
-{% block body %}
-
+{% extends 'base.html.twig' %} {% block title %} {{ parent() }} - Dashboard
+utilisateur {% endblock title %} {% block body %}
 <h2 class="mt-5 ml-5 mb-5">
 	Bienvenue sur votre tableau de gestion de vos repas
-	{{ app.user.FirstName }} 🎉
+	{{ app.user.firstName }} 🎉
 </h2>
+
+<div class="mb-3">
+	<a href="{{ path('app_meal_new') }}" class="btn btn-primary"
+		>Créer un repas</a
+	>
+</div>
+
+<div class="mb-3">
+	<a href="{{ path('app_meal_index') }}" class="btn btn-primary"
+		>Voir tous les repas</a
+	>
+</div>
 
 {% endblock %}

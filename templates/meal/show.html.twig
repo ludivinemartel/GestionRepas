@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %} {% block title %}Repas{% endblock %} {% block
+body %}
+<h1>{{ meal.Name }}</h1>
+
+<table class="table">
+	<tbody>
+		<tr>
+			<th>Picture</th>
+			<td>{{ meal.Picture }}</td>
+		</tr>
+		<tr>
+			<th>Description</th>
+			<td>{{ meal.Description }}</td>
+		</tr>
+		<tr>
+			<th>Kcal</th>
+			<td>{{ meal.Kcal }}</td>
+		</tr>
+		<tr>
+			<th>Lipide</th>
+			<td>{{ meal.Lipide }}</td>
+		</tr>
+		<tr>
+			<th>Glucide</th>
+			<td>{{ meal.Glucide }}</td>
+		</tr>
+		<tr>
+			<th>Proteine</th>
+			<td>{{ meal.Proteine }}</td>
+		</tr>
+	</tbody>
+</table>
+
+<a href="{{ path('app_meal_index') }}">Retour la liste</a>
+
+<a href="{{ path('app_meal_edit', { id: meal.id }) }}">Modifier</a>
+
+{{ include("meal/_delete_form.html.twig") }}
+{% endblock %}

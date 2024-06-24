@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %} {% block title %}New Meal{% endblock %} {% block
+body %}
+<h1>Créer un nouveau repas</h1>
+
+{{ form_start(form) }}
+{{ form_widget(form) }}
+<button class="btn btn-primary">Enregistrer</button>
+{{ form_end(form) }}
+
+<a href="{{ path('user_dashboard') }}" class="btn btn-secondary mt-3"
+	>Retour au tableau de bord</a
+>
+{% endblock %} {% block javascripts %}
+{{ parent() }}
+<script>
+	document.addEventListener("DOMContentLoaded", function () {
+		var ingredientCollectionHolder =
+			document.querySelector("#meal_ingredients");
+		var addIngredientButton = document.createElement("button");
+		addIngredientButton.type = "button";
+		addIngredientButton.className = "btn btn-info mt-2";
+		addIngredientButton.innerText = "Ajouter un ingrédient";
+
+		var newLinkLi = document.createElement("div");
+		newLinkLi.appendChild(addIngredientButton);
+		ingredientCollectionHolder.appendChild(newLinkLi);
+
+		ingredientCollectionHolder.dataset.index =
+			ingredientCollectionHolder.querySelectorAll("input").length;
+
+		addIngredientButton.addEventListener("click", function (e) {
+			addIngredientForm(ingredientCollectionHolder, newLinkLi);
+		});
+
+		function addIngredientForm(collectionHolder, newLinkLi) {
+			var prototype = collectionHolder.dataset.prototype;
+			var index = collectionHolder.dataset.index;
+			var newForm = prototype.replace(/__name__/g, index);
+
+			collectionHolder.dataset.index++;
+			var newFormLi = document.createElement("div");
+			newFormLi.innerHTML = newForm;
+			collectionHolder.insertBefore(newFormLi, newLinkLi);
+		}
+	});
+</script>
+{% endblock %}
