@@ -5,9 +5,12 @@ namespace App\Entity;
 use App\Repository\MealRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MealRepository::class)]
+#[Vich\Uploadable]
 class Meal
 {
     #[ORM\Id]
@@ -17,9 +20,6 @@ class Meal
 
     #[ORM\Column(length: 150)]
     private ?string $Name = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $Picture = null;
 
     #[ORM\Column(length: 2000)]
     private ?string $Description = null;
@@ -40,6 +40,18 @@ class Meal
     #[ORM\JoinColumn(nullable: false)]
     private ?User $Users = null;
 
+    #[Vich\UploadableField(mapping: 'meals', fileNameProperty: 'imageName', size: 'imageSize')]
+    private ?File $imageFile = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?string $imageName = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $imageSize = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null;
+
     /**
      * @var Collection<int, Ingredient>
      */
@@ -52,9 +64,16 @@ class Meal
     #[ORM\Column(nullable: true)]
     private ?int $time = null;
 
+    /**
+     * @var Collection<int, Categorie>
+     */
+    #[ORM\ManyToMany(targetEntity: Categorie::class, inversedBy: 'meals')]
+    private Collection $Categories;
+
     public function __construct()
     {
         $this->Ingredients = new ArrayCollection();
+        $this->Categories = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -70,18 +89,6 @@ class Meal
     public function setName(string $Name): static
     {
         $this->Name = $Name;
-
-        return $this;
-    }
-
-    public function getPicture(): ?string
-    {
-        return $this->Picture;
-    }
-
-    public function setPicture(?string $Picture): static
-    {
-        $this->Picture = $Picture;
 
         return $this;
     }
@@ -207,6 +214,66 @@ class Meal
     public function setTime(?int $time): static
     {
         $this->time = $time;
+
+        return $this;
+    }
+
+    public function setImageFile(?File $imageFile = null): void
+    {
+        $this->imageFile = $imageFile;
+
+        if (null !== $imageFile) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+    }
+
+    public function getImageFile(): ?File
+    {
+        return $this->imageFile;
+    }
+
+    public function setImageName(?string $imageName): void
+    {
+        $this->imageName = $imageName;
+    }
+
+    public function getImageName(): ?string
+    {
+        return $this->imageName;
+    }
+
+    public function setImageSize(?int $imageSize): void
+    {
+        $this->imageSize = $imageSize;
+    }
+
+    public function getImageSize(): ?int
+    {
+        return $this->imageSize;
+    }
+
+    /**
+     * @return Collection<int, Categorie>
+     */
+    public function getCategories(): Collection
+    {
+        return $this->Categories;
+    }
+
+    public function addCategory(Categorie $category): static
+    {
+        if (!$this->Categories->contains($category)) {
+            $this->Categories->add($category);
+        }
+
+        return $this;
+    }
+
+    public function removeCategory(Categorie $category): static
+    {
+        $this->Categories->removeElement($category);
 
         return $this;
     }
