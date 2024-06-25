@@ -2,22 +2,42 @@
 block body %}
 <h1>Liste des repas</h1>
 
+{{ form_start(form) }}
+{{ form_row(form.categorie) }}
+<button type="submit">Filtrer</button>
+{{ form_end(form) }}
+
 <table class="table">
 	<thead>
 		<tr>
 			<th>Nom</th>
-			<th>Temps de préparation</th>
 			<th>Image</th>
+			<th>Temps de préparation</th>
+			<th>Catégories</th>
 			<th>Actions</th>
 		</tr>
 	</thead>
 	<tbody>
 		{% for meal in meals %}
 		<tr>
-			<td>{{ meal.Name }}</td>
+			<td>{{ meal.name }}</td>
+			<td>
+				{% if meal.imageName %}
+				<img
+					src="{{ asset('images/meal/' ~ meal.imageName) }}"
+					alt="{{ meal.name }}"
+					style="max-width: 100px; max-height: 100px"
+				/>
+				{% else %} Pas d'image {% endif %}
+			</td>
 			<td>{{ meal.time }}</td>
-			<td>{{ meal.Picture }}</td>
-
+			<td>
+				<ul>
+					{% for category in meal.categories %}
+					<li>{{ category.name }}</li>
+					{% endfor %}
+				</ul>
+			</td>
 			<td>
 				<a href="{{ path('app_meal_show', { id: meal.id }) }}">Voir</a>
 				<a href="{{ path('app_meal_edit', { id: meal.id }) }}">Modifier</a>
@@ -25,7 +45,7 @@ block body %}
 		</tr>
 		{% else %}
 		<tr>
-			<td colspan="9">Pas de repas trouvé</td>
+			<td colspan="5">Pas de repas trouvé</td>
 		</tr>
 		{% endfor %}
 	</tbody>

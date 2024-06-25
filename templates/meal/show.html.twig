@@ -5,12 +5,20 @@ body %}
 <table class="table">
 	<tbody>
 		<tr>
-			<th>Picture</th>
-			<td>{{ meal.Picture }}</td>
+			<th>Preparation</th>
+			<td>{{ meal.Description }}</td>
 		</tr>
 		<tr>
-			<th>Description</th>
-			<td>{{ meal.Description }}</td>
+			<th>Photo</th>
+			<td>
+				{% if meal.imageName %}
+				<img
+					src="{{ asset('images/meal/' ~ meal.imageName) }}"
+					alt="{{ meal.name }}"
+					style="max-width: 100px; max-height: 100px"
+				/>
+				{% else %} Pas d'image {% endif %}
+			</td>
 		</tr>
 		<tr>
 			<th>Kcal</th>

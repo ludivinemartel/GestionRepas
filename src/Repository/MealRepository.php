@@ -6,9 +6,6 @@ use App\Entity\Meal;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-/**
- * @extends ServiceEntityRepository<Meal>
- */
 class MealRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -16,28 +13,28 @@ class MealRepository extends ServiceEntityRepository
         parent::__construct($registry, Meal::class);
     }
 
-    //    /**
-    //     * @return Meal[] Returns an array of Meal objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('m')
-    //            ->andWhere('m.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('m.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * @param User $user
+     * @return Meal[]
+     */
+    public function findByUser($user): array
+    {
+        return $this->createQueryBuilder('m')
+            ->andWhere('m.Users = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getResult();
+    }
 
-    //    public function findOneBySomeField($value): ?Meal
-    //    {
-    //        return $this->createQueryBuilder('m')
-    //            ->andWhere('m.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function findByUserAndCategory($user, $category): array
+    {
+        return $this->createQueryBuilder('m')
+            ->innerJoin('m.Categories', 'c')
+            ->andWhere('m.Users = :user')
+            ->andWhere('c.id = :category')
+            ->setParameter('user', $user)
+            ->setParameter('category', $category)
+            ->getQuery()
+            ->getResult();
+    }
 }

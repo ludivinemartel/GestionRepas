@@ -4,21 +4,42 @@ namespace App\Controller;
 
 use App\Entity\Meal;
 use App\Form\MealType;
+use App\Form\CategorieFilterType;
 use App\Repository\MealRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Bundle\SecurityBundle\Security;
 
 #[Route('/meal')]
 class MealController extends AbstractController
 {
-    #[Route('/', name: 'app_meal_index', methods: ['GET'])]
-    public function index(MealRepository $mealRepository): Response
+    #[Route('/', name: 'app_meal_index', methods: ['GET', 'POST'])]
+    public function index(Request $request, MealRepository $mealRepository, Security $security): Response
     {
+        $user = $security->getUser();
+        $form = $this->createForm(CategorieFilterType::class);
+        $form->handleRequest($request);
+
+        $meals = [];
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $categorie = $form->get('categorie')->getData();
+
+            if ($categorie) {
+                $meals = $mealRepository->findByUserAndCategory($user, $categorie->getId());
+            } else {
+                $meals = $mealRepository->findByUser($user);
+            }
+        } else {
+            $meals = $mealRepository->findByUser($user);
+        }
+
         return $this->render('meal/index.html.twig', [
-            'meals' => $mealRepository->findAll(),
+            'form' => $form->createView(),
+            'meals' => $meals,
         ]);
     }
 
