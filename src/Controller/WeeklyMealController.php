@@ -13,9 +13,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 class WeeklyMealController extends AbstractController
 {
+
     #[Route('/weekly-menu', name: 'app_weekly_menu')]
     public function index(Request $request, UserFiltreService $userFiltreService, MealRepository $mealRepository, EntityManagerInterface $em): Response
     {
@@ -122,6 +125,47 @@ class WeeklyMealController extends AbstractController
             'weekStart' => $weekStart,
             'weekEnd' => $weekEnd,
             'mealsByDayAndType' => $mealsByDayAndType,
+            'weeklyMeal' => $weeklyMeal, // Ajouter la variable weeklyMeal
+        ]);
+    }
+
+    #[Route('/weekly-menu/shopping-list/{id}', name: 'app_generate_shopping_list')]
+    public function generateShoppingList(int $id, WeeklyMealRepository $weeklyMealRepository, MealRepository $mealRepository): Response
+    {
+        $user = $this->getUser();
+        $weeklyMeal = $weeklyMealRepository->findOneBy(['user' => $user, 'id' => $id]);
+
+        if (!$weeklyMeal) {
+            throw $this->createNotFoundException('No menu found for the given week');
+        }
+
+        $mealsByDayAndType = $weeklyMeal->getMeals();
+        $ingredients = [];
+
+        foreach ($mealsByDayAndType as $day => $meals) {
+            foreach ($meals as $mealType => $mealId) {
+                $meal = $mealRepository->find($mealId);
+                if ($meal) {
+                    foreach ($meal->getIngredients() as $ingredient) {
+                        $key = $ingredient->getName() . '|' . $ingredient->getMesure();
+                        if (!isset($ingredients[$key])) {
+                            $ingredients[$key] = [
+                                'name' => $ingredient->getName(),
+                                'quantity' => 0,
+                                'measure' => $ingredient->getMesure(),
+                            ];
+                        }
+                        $ingredients[$key]['quantity'] += $ingredient->getQuantity();
+                    }
+                }
+            }
+        }
+
+        return $this->render('weekly_menu/shopping_list.html.twig', [
+            'ingredients' => $ingredients,
+            'weekStart' => $weeklyMeal->getWeekStart(),
+            'weekEnd' => $weeklyMeal->getWeekEnd(),
+            'weeklyMeal' => $weeklyMeal,
         ]);
     }
 
@@ -200,5 +244,70 @@ class WeeklyMealController extends AbstractController
 
         $this->addFlash('success', 'Weekly menu deleted!');
         return $this->redirectToRoute('app_show_weekly_menu');
+    }
+
+    #[Route('/weekly-menu/shopping-list/pdf/{id}', name: 'app_generate_shopping_list_pdf')]
+    public function generateShoppingListPdf(int $id, WeeklyMealRepository $weeklyMealRepository, MealRepository $mealRepository): Response
+    {
+        $user = $this->getUser();
+        $weeklyMeal = $weeklyMealRepository->findOneBy(['user' => $user, 'id' => $id]);
+
+        if (!$weeklyMeal) {
+            throw $this->createNotFoundException('No menu found for the given week');
+        }
+
+        $mealsByDayAndType = $weeklyMeal->getMeals();
+        $ingredients = [];
+
+        foreach ($mealsByDayAndType as $day => $meals) {
+            foreach ($meals as $mealType => $mealId) {
+                $meal = $mealRepository->find($mealId);
+                if ($meal) {
+                    foreach ($meal->getIngredients() as $ingredient) {
+                        $key = $ingredient->getName() . '|' . $ingredient->getMesure();
+                        if (!isset($ingredients[$key])) {
+                            $ingredients[$key] = [
+                                'name' => $ingredient->getName(),
+                                'quantity' => 0,
+                                'measure' => $ingredient->getMesure(),
+                            ];
+                        }
+                        $ingredients[$key]['quantity'] += $ingredient->getQuantity();
+                    }
+                }
+            }
+        }
+
+        // Configure Dompdf according to your needs
+        $pdfOptions = new Options();
+        $pdfOptions->set('defaultFont', 'Arial');
+
+        // Instantiate Dompdf with our options
+        $dompdf = new Dompdf($pdfOptions);
+
+        // Retrieve the HTML generated in our twig file
+        $html = $this->renderView('weekly_menu/shopping_list_pdf.html.twig', [
+            'ingredients' => $ingredients,
+            'weekStart' => $weeklyMeal->getWeekStart(),
+            'weekEnd' => $weeklyMeal->getWeekEnd(),
+        ]);
+
+        // Load HTML to Dompdf
+        $dompdf->loadHtml($html);
+
+        // (Optional) Setup the paper size and orientation
+        $dompdf->setPaper('A4', 'portrait');
+
+        // Render the HTML as PDF
+        $dompdf->render();
+
+        // Output the generated PDF to Browser (force download)
+        $dompdf->stream("shopping_list.pdf", [
+            "Attachment" => true
+        ]);
+
+        return new Response('', 200, [
+            'Content-Type' => 'application/pdf',
+        ]);
     }
 }

@@ -23,8 +23,9 @@ services:
   App\EntityListener\:
     resource: "../src/EntityListener"
     tags: ["doctrine.orm.entity_listener"]
-  # add more service definitions when explicit configuration is needed
-  # please note that last definitions always *replace* previous ones
+
+  # Add more service definitions when explicit configuration is needed
+  # Please note that last definitions always *replace* previous ones
 
   Symfony\Component\Security\Core\Security:
     public: true
@@ -32,3 +33,9 @@ services:
   App\Security\UserProvider:
     arguments:
       $userRepository: '@App\Repository\UserRepository'
+
+  Dompdf\Dompdf:
+    arguments:
+      $options: '@Dompdf\Options'
+
+  Dompdf\Options: ~

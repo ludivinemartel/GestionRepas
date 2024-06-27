@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste de courses{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1>Liste de courses pour la semaine du {{ weekStart|date('d/m/Y') }} au {{ weekEnd|date('d/m/Y') }}</h1>
+
+    <ul>
+        {% for ingredient in ingredients %}
+            <li>{{ ingredient.quantity }} {{ ingredient.measure }} de {{ ingredient.name }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
