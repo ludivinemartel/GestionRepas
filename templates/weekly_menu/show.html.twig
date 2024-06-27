@@ -3,6 +3,10 @@
 <div class="container">
 	<h1>Menu Hebdomadaire</h1>
 
+	<a href="{{ path('app_show_weekly_menu') }}" class="btn btn-secondary mb-3"
+		>Retour à la liste</a
+	>
+
 	<h2>
 		Semaine du {{ weekStart|date('d/m/Y') }} au {{ weekEnd|date('d/m/Y') }}
 	</h2>
@@ -39,6 +43,12 @@
 			</tbody>
 		</table>
 	</div>
+
+	<a
+		href="{{ path('app_generate_shopping_list', { id: weeklyMeal.id }) }}"
+		class="btn btn-primary mt-3"
+		>Générer la liste de courses</a
+	>
 
 	<a href="{{ path('app_show_weekly_menu') }}" class="btn btn-secondary mt-3"
 		>Retour à la liste</a
