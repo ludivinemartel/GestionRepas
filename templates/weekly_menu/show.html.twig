@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %} {% block title %}Menu Hebdomadaire{% endblock %}
+{% block body %}
+<div class="container">
+	<h1>Menu Hebdomadaire</h1>
+
+	<h2>
+		Semaine du {{ weekStart|date('d/m/Y') }} au {{ weekEnd|date('d/m/Y') }}
+	</h2>
+
+	<div class="table-responsive" style="width: 100%">
+		<table class="table table-bordered">
+			<thead>
+				<tr style="height: 70px">
+					<th></th>
+					<th>Lundi</th>
+					<th>Mardi</th>
+					<th>Mercredi</th>
+					<th>Jeudi</th>
+					<th>Vendredi</th>
+					<th>Samedi</th>
+					<th>Dimanche</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for mealType, mealTypeLabel in { 'breakfast': 'Petit-déjeuner',
+				'lunch': 'Déjeuner', 'snack': 'Encas', 'dinner': 'Dîner' } %}
+				<tr style="height: 100px">
+					<th scope="row">{{ mealTypeLabel }}</th>
+					{% for day in ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi',
+					'Samedi', 'Dimanche'] %}
+					<td>
+						{% if mealsByDayAndType[day][mealType] is defined %}
+						{{ mealsByDayAndType[day][mealType].name }}
+						{% else %} - {% endif %}
+					</td>
+					{% endfor %}
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+
+	<a href="{{ path('app_show_weekly_menu') }}" class="btn btn-secondary mt-3"
+		>Retour à la liste</a
+	>
+</div>
+{% endblock %}

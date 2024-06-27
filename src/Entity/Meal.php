@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\MealRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Doctrine\ORM\Mapping as ORM;
@@ -38,7 +39,7 @@ class Meal
 
     #[ORM\ManyToOne(inversedBy: 'meals')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $Users = null;
+    private ?User $user = null;
 
     #[Vich\UploadableField(mapping: 'meals', fileNameProperty: 'imageName', size: 'imageSize')]
     private ?File $imageFile = null;
@@ -69,6 +70,9 @@ class Meal
      */
     #[ORM\ManyToMany(targetEntity: Categorie::class, inversedBy: 'meals')]
     private Collection $Categories;
+
+    #[ORM\Column(type: Types::ARRAY, nullable: true)]
+    private ?array $Daily = null;
 
     public function __construct()
     {
@@ -153,14 +157,14 @@ class Meal
         return $this;
     }
 
-    public function getUsers(): ?User
+    public function getUser(): ?User
     {
-        return $this->Users;
+        return $this->user;
     }
 
-    public function setUsers(?User $Users): static
+    public function setUser(?User $Users): static
     {
-        $this->Users = $Users;
+        $this->user = $Users;
 
         return $this;
     }
@@ -274,6 +278,18 @@ class Meal
     public function removeCategory(Categorie $category): static
     {
         $this->Categories->removeElement($category);
+
+        return $this;
+    }
+
+    public function getDaily(): ?array
+    {
+        return $this->Daily;
+    }
+
+    public function setDaily(?array $Daily): static
+    {
+        $this->Daily = $Daily;
 
         return $this;
     }

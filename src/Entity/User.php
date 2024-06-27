@@ -54,9 +54,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Meal::class, mappedBy: 'Users')]
     private Collection $meals;
 
+    /**
+     * @var Collection<int, WeeklyMeal>
+     */
+    #[ORM\OneToMany(targetEntity: WeeklyMeal::class, mappedBy: 'user')]
+    private Collection $weeklyMeals;
+
     public function __construct()
     {
         $this->meals = new ArrayCollection();
+        $this->weeklyMeals = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -111,8 +118,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-
-
 
     /**
      * @see PasswordAuthenticatedUserInterface
@@ -198,6 +203,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($meal->getUsers() === $this) {
                 $meal->setUsers(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, WeeklyMeal>
+     */
+    public function getWeeklyMeals(): Collection
+    {
+        return $this->weeklyMeals;
+    }
+
+    public function addWeeklyMeal(WeeklyMeal $weeklyMeal): static
+    {
+        if (!$this->weeklyMeals->contains($weeklyMeal)) {
+            $this->weeklyMeals->add($weeklyMeal);
+            $weeklyMeal->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWeeklyMeal(WeeklyMeal $weeklyMeal): static
+    {
+        if ($this->weeklyMeals->removeElement($weeklyMeal)) {
+            // set the owning side to null (unless already changed)
+            if ($weeklyMeal->getUser() === $this) {
+                $weeklyMeal->setUser(null);
             }
         }
 

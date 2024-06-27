@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %} {% block title %}Mes Menus Hebdomadaires{%
+endblock %} {% block body %}
+<div class="container">
+	<h1>Mes Menus Hebdomadaires</h1>
+
+	<ul>
+		{% for id, menu in menusByWeek %}
+		<li>
+			<a href="{{ path('app_show_weekly_menu_detail', { id: id }) }}">
+				Semaine du {{ menu.weekStart|date('d/m/Y') }} au
+				{{ menu.weekEnd|date('d/m/Y') }}
+			</a>
+			<a
+				href="{{ path('app_edit_weekly_menu', { id: id }) }}"
+				class="btn btn-primary btn-sm"
+				>Modifier</a
+			>
+			<form
+				action="{{ path('app_delete_weekly_menu', { id: id }) }}"
+				method="post"
+				style="display: inline-block"
+			>
+				<input
+					type="hidden"
+					name="_token"
+					value="{{ csrf_token('delete' ~ id) }}"
+				/>
+				<button class="btn btn-danger btn-sm" type="submit">Supprimer</button>
+			</form>
+		</li>
+		{% endfor %}
+	</ul>
+</div>
+{% endblock %}

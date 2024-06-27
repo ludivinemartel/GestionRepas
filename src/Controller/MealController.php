@@ -52,7 +52,7 @@ class MealController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $meal->setUsers($this->getUser());
+            $meal->setUser($this->getUser());
             foreach ($meal->getIngredients() as $ingredient) {
                 $ingredient->setMeal($meal);
             }
