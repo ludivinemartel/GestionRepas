@@ -20,7 +20,7 @@ class MealRepository extends ServiceEntityRepository
     public function findByUser($user): array
     {
         return $this->createQueryBuilder('m')
-            ->andWhere('m.Users = :user')
+            ->andWhere('m.user = :user')
             ->setParameter('user', $user)
             ->getQuery()
             ->getResult();
@@ -30,7 +30,7 @@ class MealRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('m')
             ->innerJoin('m.Categories', 'c')
-            ->andWhere('m.Users = :user')
+            ->andWhere('m.user = :user')
             ->andWhere('c.id = :category')
             ->setParameter('user', $user)
             ->setParameter('category', $category)

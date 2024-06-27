@@ -6,6 +6,7 @@ use App\Entity\Meal;
 use App\Entity\Categorie;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -32,7 +33,8 @@ class MealType extends AbstractType
 
         $builder
             ->add('name', TextType::class, [
-                'label' => 'Nom'
+                'label' => 'Nom',
+                'required' => true
             ])
             ->add('ingredients', CollectionType::class, [
                 'entry_type' => IngredientType::class,
@@ -47,25 +49,32 @@ class MealType extends AbstractType
                 ],
             ])
             ->add('description', TextareaType::class, [
-                'label' => 'Preparation'
+                'label' => 'Préparation',
+                'required' => true
             ])
             ->add('NbPersonne', IntegerType::class, [
-                'label' => 'Nombre de personne'
+                'label' => 'Nombre de personne',
+                'required' => true
             ])
             ->add('time', IntegerType::class, [
-                'label' => 'Temps de préparation en minutes'
+                'label' => 'Temps de préparation en minutes',
+                'required' => true
             ])
             ->add('kcal', IntegerType::class, [
-                'label' => 'Calories pour 100 g'
+                'label' => 'Calories pour 100 g',
+                'required' => false
             ])
             ->add('glucide', IntegerType::class, [
-                'label' => 'Glucides'
+                'label' => 'Glucides',
+                'required' => false
             ])
             ->add('proteine', IntegerType::class, [
-                'label' => 'Protéines'
+                'label' => 'Protéines',
+                'required' => false
             ])
             ->add('lipide', IntegerType::class, [
-                'label' => 'Lipides'
+                'label' => 'Lipides',
+                'required' => false
             ])
             ->add('imageFile', FileType::class, [
                 'label' => 'Image (JPEG, PNG)',
@@ -82,6 +91,18 @@ class MealType extends AbstractType
                 'multiple' => true,
                 'expanded' => true,
                 'label' => 'Catégories'
+            ])
+            ->add('daily', ChoiceType::class, [
+                'choices' => [
+                    'Petit-déjeuner' => 'breakfast',
+                    'Déjeuner' => 'lunch',
+                    'Encas' => 'snack',
+                    'Dîner' => 'dinner',
+                ],
+                'multiple' => true,
+                'expanded' => true,
+                'required' => true,
+                'label' => 'Repas de la journée'
             ]);
     }
 

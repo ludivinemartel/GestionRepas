@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier Menu Hebdomadaire{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1>Modifier Menu Hebdomadaire</h1>
+
+    {{ form_start(form) }}
+
+    <div>
+        <label>Début de la semaine</label>
+        {{ form_widget(form.weekStart) }}
+    </div>
+
+    <div>
+        <label>Fin de la semaine</label>
+        {{ form_widget(form.weekEnd) }}
+    </div>
+
+    <div class="table-responsive" style="width: 100%">
+        <table class="table table-bordered">
+            <thead>
+                <tr style="height: 70px">
+                    <th></th>
+                    <th>Lundi</th>
+                    <th>Mardi</th>
+                    <th>Mercredi</th>
+                    <th>Jeudi</th>
+                    <th>Vendredi</th>
+                    <th>Samedi</th>
+                    <th>Dimanche</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for mealType, mealTypeLabel in { 'breakfast': 'Petit-déjeuner',
+                'lunch': 'Déjeuner', 'snack': 'Encas', 'dinner': 'Dîner' } %}
+                <tr style="height: 100px">
+                    <th scope="row">{{ mealTypeLabel }}</th>
+                    {% for day in ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi',
+                    'Samedi', 'Dimanche'] %}
+                    <td>
+                        <select name="weekly_menu[meals][{{ day }}][{{ mealType }}]" class="form-control">
+                            <option value="">Sélectionnez un repas</option>
+                            {% for meal in mealsByType[mealType] %}
+                            <option value="{{ meal.id }}" {% if weeklyMeal.meals[day] is defined and weeklyMeal.meals[day][mealType] == meal.id %}selected{% endif %}>{{ meal.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Enregistrer</button>
+
+    {{ form_end(form) }}
+</div>
+{% endblock %}
