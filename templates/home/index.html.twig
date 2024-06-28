@@ -1,10 +1,5 @@
-{% extends 'base.html.twig' %} {% block title %} {{ parent() }} - Accueil {%
-endblock title %} {% block body %} {% for message in app.flashes('success') %}
-<div class="alert alert-success mt-4">
-	{{ message }}
-</div>
-{% endfor %}
-
+{% extends 'base.html.twig' %} {% block title %} {{ parent() }} - Accueil
+{%endblock title %} {% block body %}
 <div class="vstack gap-2 col-md-5 mx-auto m-5 display-3">
 	Logiciel de gestion <br />
 	des repas<br />

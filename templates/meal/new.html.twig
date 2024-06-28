@@ -1,15 +1,60 @@
 {% extends 'base.html.twig' %} {% block title %}Ajouter repas{% endblock %} {%
 block body %}
-<h1>Créer un nouveau repas</h1>
+<div class="container">
+	<h1>Créer un nouveau repas</h1>
 
-{{ form_start(form) }}
-{{ form_widget(form) }}
-<button class="btn btn-primary">Enregistrer</button>
-{{ form_end(form) }}
+	{{ form_start(form) }}
 
-<a href="{{ path('user_dashboard') }}" class="btn btn-secondary mt-3"
-	>Retour au tableau de bord</a
->
+	<div class="form-section">
+		<label class="label">Ajouter titre du repas</label>
+		{{ form_widget(form.name) }}
+	</div>
+
+	<div class="form-section">
+		<label class="label">Ajouter la liste des ingrédients</label>
+		<div class="flex-container">
+			<div class="flex-item">
+				{{ form_widget(form.ingredients) }}
+			</div>
+			<div class="flex-item">
+				<label class="label">Nbr de personne</label>
+				{{ form_widget(form.NbPersonne) }}
+			</div>
+			<div class="flex-item">
+				<label class="label">Temps de préparation</label>
+				{{ form_widget(form.time) }}
+			</div>
+		</div>
+	</div>
+
+	<div class="form-section">
+		<label class="label">Repas de la journée</label>
+		{{ form_widget(form.daily) }}
+	</div>
+
+	<div class="form-section">
+		<label class="label">Tags du repas</label>
+		{{ form_widget(form.categories) }}
+	</div>
+
+	<div class="form-section">
+		<label class="label">Préparation</label>
+		{{ form_widget(form.description) }}
+	</div>
+
+	<div class="form-section">
+		<label class="label">Ajouter une image</label>
+		{{ form_widget(form.imageFile) }}
+	</div>
+
+	<button class="button">Enregistrer</button>
+
+	{{ form_end(form) }}
+
+	<a href="{{ path('user_dashboard') }}" class="button button-secondary mt-3"
+		>Retour au tableau de bord</a
+	>
+</div>
 {% endblock %} {% block javascripts %}
 {{ parent() }}
 <script>
@@ -18,7 +63,7 @@ block body %}
 			document.querySelector("#meal_ingredients");
 		var addIngredientButton = document.createElement("button");
 		addIngredientButton.type = "button";
-		addIngredientButton.className = "btn btn-info mt-2";
+		addIngredientButton.className = "add-button";
 		addIngredientButton.innerText = "Ajouter un ingrédient";
 
 		var newLinkLi = document.createElement("div");
