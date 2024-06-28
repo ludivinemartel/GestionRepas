@@ -60,10 +60,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: WeeklyMeal::class, mappedBy: 'user')]
     private Collection $weeklyMeals;
 
+    /**
+     * @var Collection<int, PantryItem>
+     */
+    #[ORM\OneToMany(targetEntity: PantryItem::class, mappedBy: 'user')]
+    private Collection $pantryItems;
+
     public function __construct()
     {
         $this->meals = new ArrayCollection();
         $this->weeklyMeals = new ArrayCollection();
+        $this->pantryItems = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -191,7 +198,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->meals->contains($meal)) {
             $this->meals->add($meal);
-            $meal->setUsers($this);
+            $meal->setUser($this);
         }
 
         return $this;
@@ -201,8 +208,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->meals->removeElement($meal)) {
             // set the owning side to null (unless already changed)
-            if ($meal->getUsers() === $this) {
-                $meal->setUsers(null);
+            if ($meal->getUser() === $this) {
+                $meal->setUser(null);
             }
         }
 
@@ -233,6 +240,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($weeklyMeal->getUser() === $this) {
                 $weeklyMeal->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PantryItem>
+     */
+    public function getPantryItems(): Collection
+    {
+        return $this->pantryItems;
+    }
+
+    public function addPantryItem(PantryItem $pantryItem): static
+    {
+        if (!$this->pantryItems->contains($pantryItem)) {
+            $this->pantryItems->add($pantryItem);
+            $pantryItem->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removePantryItem(PantryItem $pantryItem): static
+    {
+        if ($this->pantryItems->removeElement($pantryItem)) {
+            // set the owning side to null (unless already changed)
+            if ($pantryItem->getUser() === $this) {
+                $pantryItem->setUser(null);
             }
         }
 
