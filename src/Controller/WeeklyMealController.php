@@ -7,6 +7,7 @@ use App\Entity\WeeklyMeal;
 use App\Form\WeeklyMealType;
 use App\Service\UserFiltreService;
 use App\Repository\MealRepository;
+use App\Repository\PantryItemRepository;
 use App\Repository\WeeklyMealRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -129,46 +130,6 @@ class WeeklyMealController extends AbstractController
         ]);
     }
 
-    #[Route('/weekly-menu/shopping-list/{id}', name: 'app_generate_shopping_list')]
-    public function generateShoppingList(int $id, WeeklyMealRepository $weeklyMealRepository, MealRepository $mealRepository): Response
-    {
-        $user = $this->getUser();
-        $weeklyMeal = $weeklyMealRepository->findOneBy(['user' => $user, 'id' => $id]);
-
-        if (!$weeklyMeal) {
-            throw $this->createNotFoundException('No menu found for the given week');
-        }
-
-        $mealsByDayAndType = $weeklyMeal->getMeals();
-        $ingredients = [];
-
-        foreach ($mealsByDayAndType as $day => $meals) {
-            foreach ($meals as $mealType => $mealId) {
-                $meal = $mealRepository->find($mealId);
-                if ($meal) {
-                    foreach ($meal->getIngredients() as $ingredient) {
-                        $key = $ingredient->getName() . '|' . $ingredient->getMesure();
-                        if (!isset($ingredients[$key])) {
-                            $ingredients[$key] = [
-                                'name' => $ingredient->getName(),
-                                'quantity' => 0,
-                                'measure' => $ingredient->getMesure(),
-                            ];
-                        }
-                        $ingredients[$key]['quantity'] += $ingredient->getQuantity();
-                    }
-                }
-            }
-        }
-
-        return $this->render('weekly_menu/shopping_list.html.twig', [
-            'ingredients' => $ingredients,
-            'weekStart' => $weeklyMeal->getWeekStart(),
-            'weekEnd' => $weeklyMeal->getWeekEnd(),
-            'weeklyMeal' => $weeklyMeal,
-        ]);
-    }
-
     #[Route('/weekly-menu/edit/{id}', name: 'app_edit_weekly_menu')]
     public function edit(int $id, Request $request, WeeklyMealRepository $weeklyMealRepository, MealRepository $mealRepository, EntityManagerInterface $em): Response
     {
@@ -245,6 +206,74 @@ class WeeklyMealController extends AbstractController
         $this->addFlash('success', 'Weekly menu deleted!');
         return $this->redirectToRoute('app_show_weekly_menu');
     }
+
+    #[Route('/weekly-menu/shopping-list/{id}', name: 'app_generate_shopping_list')]
+    public function generateShoppingList(int $id, WeeklyMealRepository $weeklyMealRepository, MealRepository $mealRepository, PantryItemRepository $pantryItemRepository): Response
+    {
+        $user = $this->getUser();
+        $weeklyMeal = $weeklyMealRepository->findOneBy(['user' => $user, 'id' => $id]);
+
+        if (!$weeklyMeal) {
+            throw $this->createNotFoundException('No menu found for the given week');
+        }
+
+        $mealsByDayAndType = $weeklyMeal->getMeals();
+        $ingredients = [];
+
+        // Récupérer les éléments du garde-manger de l'utilisateur
+        $pantryItems = $pantryItemRepository->findBy(['user' => $user]);
+        $pantryItemsMap = [];
+        foreach ($pantryItems as $pantryItem) {
+            $key = $pantryItem->getName() . '|' . $pantryItem->getMeasure();
+            if (!isset($pantryItemsMap[$key])) {
+                $pantryItemsMap[$key] = 0;
+            }
+            $pantryItemsMap[$key] += $pantryItem->getQuantity();
+        }
+
+        foreach ($mealsByDayAndType as $day => $meals) {
+            foreach ($meals as $mealType => $mealId) {
+                $meal = $mealRepository->find($mealId);
+                if ($meal) {
+                    foreach ($meal->getIngredients() as $ingredient) {
+                        $key = $ingredient->getName() . '|' . $ingredient->getMesure();
+                        $requiredQuantity = $ingredient->getQuantity();
+
+                        if (isset($pantryItemsMap[$key])) {
+                            if ($pantryItemsMap[$key] >= $requiredQuantity) {
+                                // Si la quantité dans le garde-manger est suffisante, déduire la quantité utilisée
+                                $pantryItemsMap[$key] -= $requiredQuantity;
+                                $requiredQuantity = 0;
+                            } else {
+                                // Sinon, déduire ce qui est disponible et ajouter le reste à la liste de courses
+                                $requiredQuantity -= $pantryItemsMap[$key];
+                                $pantryItemsMap[$key] = 0;
+                            }
+                        }
+
+                        if ($requiredQuantity > 0) {
+                            if (!isset($ingredients[$key])) {
+                                $ingredients[$key] = [
+                                    'name' => $ingredient->getName(),
+                                    'quantity' => 0,
+                                    'measure' => $ingredient->getMesure(),
+                                ];
+                            }
+                            $ingredients[$key]['quantity'] += $requiredQuantity;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $this->render('weekly_menu/shopping_list.html.twig', [
+            'ingredients' => $ingredients,
+            'weekStart' => $weeklyMeal->getWeekStart(),
+            'weekEnd' => $weeklyMeal->getWeekEnd(),
+            'weeklyMeal' => $weeklyMeal,
+        ]);
+    }
+
 
     #[Route('/weekly-menu/shopping-list/pdf/{id}', name: 'app_generate_shopping_list_pdf')]
     public function generateShoppingListPdf(int $id, WeeklyMealRepository $weeklyMealRepository, MealRepository $mealRepository): Response
