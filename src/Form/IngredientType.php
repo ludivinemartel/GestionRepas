@@ -16,13 +16,16 @@ class IngredientType extends AbstractType
     {
         $builder
             ->add('name', TextType::class, [
-                'label' => 'Nom'
+                'label' => 'Nom',
+                'mapped' => false,
             ])
             ->add('quantity', IntegerType::class, [
-                'label' => 'Quantité'
+                'label' => 'Quantité',
+                'mapped' => false,
             ])
             ->add('mesure', ChoiceType::class, [
                 'label' => 'Unité de mesure',
+                'mapped' => false,
                 'choices' => [
                     '' => '',
                     'ml' => 'ml',

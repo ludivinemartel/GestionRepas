@@ -7,15 +7,14 @@ use App\Entity\Categorie;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Bundle\SecurityBundle\Security;
-use App\Form\IngredientType;
 use Doctrine\ORM\EntityRepository;
 
 class MealType extends AbstractType
@@ -34,47 +33,19 @@ class MealType extends AbstractType
         $builder
             ->add('name', TextType::class, [
                 'label' => 'Nom',
-                'required' => true
-            ])
-            ->add('ingredients', CollectionType::class, [
-                'entry_type' => IngredientType::class,
-                'entry_options' => ['label' => false],
-                'allow_add' => true,
-                'allow_delete' => true,
-                'by_reference' => false,
-                'prototype' => true,
-                'prototype_name' => '__name__',
-                'attr' => [
-                    'class' => 'ingredients',
-                ],
+                'required' => true,
             ])
             ->add('description', TextareaType::class, [
                 'label' => 'Préparation',
-                'required' => true
+                'required' => true,
             ])
             ->add('NbPersonne', IntegerType::class, [
                 'label' => 'Nombre de personne',
-                'required' => true
+                'required' => true,
             ])
             ->add('time', IntegerType::class, [
                 'label' => 'Temps de préparation en minutes',
-                'required' => true
-            ])
-            ->add('kcal', IntegerType::class, [
-                'label' => 'Calories pour 100 g',
-                'required' => false
-            ])
-            ->add('glucide', IntegerType::class, [
-                'label' => 'Glucides',
-                'required' => false
-            ])
-            ->add('proteine', IntegerType::class, [
-                'label' => 'Protéines',
-                'required' => false
-            ])
-            ->add('lipide', IntegerType::class, [
-                'label' => 'Lipides',
-                'required' => false
+                'required' => true,
             ])
             ->add('imageFile', FileType::class, [
                 'label' => 'Image (JPEG, PNG)',
@@ -90,7 +61,7 @@ class MealType extends AbstractType
                 'choice_label' => 'name',
                 'multiple' => true,
                 'expanded' => true,
-                'label' => 'Catégories'
+                'label' => 'Catégories',
             ])
             ->add('daily', ChoiceType::class, [
                 'choices' => [
@@ -102,7 +73,38 @@ class MealType extends AbstractType
                 'multiple' => true,
                 'expanded' => true,
                 'required' => true,
-                'label' => 'Repas de la journée'
+                'label' => 'Repas de la journée',
+            ])
+            ->add('ingredient_id', HiddenType::class, [
+                'mapped' => false,
+            ])
+            ->add('ingredient_name', TextType::class, [
+                'mapped' => false,
+                'required' => false,
+                'attr' => ['class' => 'select2'],
+                'label' => 'Ingrédient',
+            ])
+            ->add('ingredient_quantity', IntegerType::class, [
+                'mapped' => false,
+                'required' => false,
+                'label' => 'Quantité',
+            ])
+            ->add('ingredient_measure', ChoiceType::class, [
+                'mapped' => false,
+                'required' => false,
+                'label' => 'Unité de mesure',
+                'choices' => [
+                    '' => '',
+                    'ml' => 'ml',
+                    'cl' => 'cl',
+                    'dl' => 'dl',
+                    'l' => 'l',
+                    'g' => 'g',
+                    'kg' => 'kg',
+                ],
+            ])
+            ->add('ingredients_data', HiddenType::class, [
+                'mapped' => false,
             ]);
     }
 

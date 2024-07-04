@@ -25,6 +25,9 @@ class Ingredient
     #[ORM\ManyToOne(inversedBy: 'Ingredients')]
     private ?Meal $meal = null;
 
+    #[ORM\ManyToOne(inversedBy: 'ingredients')]
+    private ?FoodComposition $foodComposition_id = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -74,6 +77,18 @@ class Ingredient
     public function setMeal(?Meal $meal): static
     {
         $this->meal = $meal;
+
+        return $this;
+    }
+
+    public function getFoodCompositionId(): ?FoodComposition
+    {
+        return $this->foodComposition_id;
+    }
+
+    public function setFoodCompositionId(?FoodComposition $foodComposition_id): static
+    {
+        $this->foodComposition_id = $foodComposition_id;
 
         return $this;
     }

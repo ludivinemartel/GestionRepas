@@ -14,6 +14,7 @@ block body %}
 			<th>Image</th>
 			<th>Temps de préparation</th>
 			<th>Catégories</th>
+			<th>Ingrédients</th>
 			<th>Actions</th>
 		</tr>
 	</thead>
@@ -39,13 +40,23 @@ block body %}
 				</ul>
 			</td>
 			<td>
+				<ul>
+					{% for ingredient in meal.ingredients %}
+					<li>
+						{{ ingredient.name }} - {{ ingredient.quantity }}
+						{{ ingredient.mesure }}
+					</li>
+					{% endfor %}
+				</ul>
+			</td>
+			<td>
 				<a href="{{ path('app_meal_show', { id: meal.id }) }}">Voir</a>
 				<a href="{{ path('app_meal_edit', { id: meal.id }) }}">Modifier</a>
 			</td>
 		</tr>
 		{% else %}
 		<tr>
-			<td colspan="5">Pas de repas trouvé</td>
+			<td colspan="6">Pas de repas trouvé</td>
 		</tr>
 		{% endfor %}
 	</tbody>
