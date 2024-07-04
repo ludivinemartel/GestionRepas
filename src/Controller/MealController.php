@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Meal;
+use App\Entity\Ingredient;
+use App\Entity\FoodComposition;
 use App\Form\MealType;
 use App\Form\CategorieFilterType;
 use App\Repository\MealRepository;
@@ -43,29 +45,64 @@ class MealController extends AbstractController
         ]);
     }
 
-    #[Route('/new', name: 'app_meal_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $em): Response
+    #[Route('/new', name: 'app_meal_new')]
+    public function new(Request $request, EntityManagerInterface $entityManager, Security $security): Response
     {
         $meal = new Meal();
         $form = $this->createForm(MealType::class, $meal);
-
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $meal->setUser($this->getUser());
-            foreach ($meal->getIngredients() as $ingredient) {
-                $ingredient->setMeal($meal);
+            // Associer l'utilisateur connecté au repas
+            $user = $security->getUser();
+            if ($user) {
+                $meal->setUser($user);
+            } else {
+                throw new \Exception('User must be logged in to create a meal.');
             }
-            $em->persist($meal);
-            $em->flush();
 
-            return $this->redirectToRoute('user_dashboard');
+            // Get the ingredients data from the hidden field
+            $ingredientDataJson = $form->get('ingredients_data')->getData();
+            $ingredientData = json_decode($ingredientDataJson, true);
+
+            if (is_array($ingredientData)) {
+                foreach ($ingredientData as $ingredientItem) {
+                    $ingredient = new Ingredient();
+                    $ingredient->setName($ingredientItem['name']);
+                    $ingredient->setQuantity($ingredientItem['quantity']);
+                    $ingredient->setMesure($ingredientItem['measure']);
+
+                    // Set the FoodComposition entity
+                    $foodComposition = $entityManager->getRepository(FoodComposition::class)->find($ingredientItem['id']);
+                    if ($foodComposition) {
+                        $ingredient->setFoodCompositionId($foodComposition);
+                    } else {
+                        throw new \Exception('Invalid FoodComposition ID.');
+                    }
+
+                    $meal->addIngredient($ingredient);
+                }
+            } else {
+                // Log or handle the error of invalid ingredient data
+                $this->addFlash('error', 'Invalid ingredient data.');
+                return $this->render('meal/new.html.twig', [
+                    'form' => $form->createView(),
+                ]);
+            }
+
+            $entityManager->persist($meal);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Meal created successfully with ingredients.');
+
+            return $this->redirectToRoute('app_meal_index');
         }
 
         return $this->render('meal/new.html.twig', [
             'form' => $form->createView(),
         ]);
     }
+
 
     #[Route('/{id}', name: 'app_meal_show', methods: ['GET'])]
     public function show(Meal $meal): Response
