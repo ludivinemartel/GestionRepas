@@ -8,6 +8,7 @@ use App\Entity\FoodComposition;
 use App\Form\MealType;
 use App\Form\CategorieFilterType;
 use App\Repository\MealRepository;
+use App\Service\UnitConverter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -46,14 +47,13 @@ class MealController extends AbstractController
     }
 
     #[Route('/new', name: 'app_meal_new')]
-    public function new(Request $request, EntityManagerInterface $entityManager, Security $security): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, Security $security, UnitConverter $unitConverter): Response
     {
         $meal = new Meal();
         $form = $this->createForm(MealType::class, $meal);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Associer l'utilisateur connecté au repas
             $user = $security->getUser();
             if ($user) {
                 $meal->setUser($user);
@@ -61,9 +61,13 @@ class MealController extends AbstractController
                 throw new \Exception('User must be logged in to create a meal.');
             }
 
-            // Get the ingredients data from the hidden field
             $ingredientDataJson = $form->get('ingredients_data')->getData();
             $ingredientData = json_decode($ingredientDataJson, true);
+
+            $totalKcal = 0;
+            $totalLipide = 0;
+            $totalGlucide = 0;
+            $totalProteine = 0;
 
             if (is_array($ingredientData)) {
                 foreach ($ingredientData as $ingredientItem) {
@@ -72,10 +76,16 @@ class MealController extends AbstractController
                     $ingredient->setQuantity($ingredientItem['quantity']);
                     $ingredient->setMesure($ingredientItem['measure']);
 
-                    // Set the FoodComposition entity
                     $foodComposition = $entityManager->getRepository(FoodComposition::class)->find($ingredientItem['id']);
                     if ($foodComposition) {
                         $ingredient->setFoodCompositionId($foodComposition);
+
+                        $quantityInGrams = $unitConverter->toGrams($ingredientItem['quantity'], $ingredientItem['measure']);
+
+                        $totalKcal += ($foodComposition->getKcal() ?? 0) * ($quantityInGrams / 100);
+                        $totalLipide += ($foodComposition->getFat() ?? 0) * ($quantityInGrams / 100);
+                        $totalGlucide += ($foodComposition->getCarbohydrate() ?? 0) * ($quantityInGrams / 100);
+                        $totalProteine += ($foodComposition->getProtein() ?? 0) * ($quantityInGrams / 100);
                     } else {
                         throw new \Exception('Invalid FoodComposition ID.');
                     }
@@ -83,12 +93,16 @@ class MealController extends AbstractController
                     $meal->addIngredient($ingredient);
                 }
             } else {
-                // Log or handle the error of invalid ingredient data
                 $this->addFlash('error', 'Invalid ingredient data.');
                 return $this->render('meal/new.html.twig', [
                     'form' => $form->createView(),
                 ]);
             }
+
+            $meal->setKcal($totalKcal);
+            $meal->setLipide($totalLipide);
+            $meal->setGlucide($totalGlucide);
+            $meal->setProteine($totalProteine);
 
             $entityManager->persist($meal);
             $entityManager->flush();
@@ -102,6 +116,7 @@ class MealController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+
 
 
     #[Route('/{id}', name: 'app_meal_show', methods: ['GET'])]

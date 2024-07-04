@@ -87,20 +87,26 @@ class MealType extends AbstractType
             ->add('ingredient_quantity', IntegerType::class, [
                 'mapped' => false,
                 'required' => false,
-                'label' => 'Quantité',
+                'label' => 'Quantité (grammes)',
             ])
             ->add('ingredient_measure', ChoiceType::class, [
                 'mapped' => false,
                 'required' => false,
                 'label' => 'Unité de mesure',
                 'choices' => [
-                    '' => '',
+                    'g' => 'g',
                     'ml' => 'ml',
                     'cl' => 'cl',
-                    'dl' => 'dl',
                     'l' => 'l',
-                    'g' => 'g',
                     'kg' => 'kg',
+                    'portion' => 'portion',
+                    'tranche' => 'tranche',
+                    'piece' => 'piece',
+                    'cas' => 'cuillère à soupe',
+                    'cac' => 'cuillère à café',
+                    'tasse' => 'tasse',
+                    'verre' => 'verre',
+                    'bol' => 'bol',
                 ],
             ])
             ->add('ingredients_data', HiddenType::class, [

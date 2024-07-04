@@ -38,3 +38,5 @@ services:
   App\Command\:
     resource: "../src/Command"
     tags: ["console.command"]
+
+  App\Service\UnitConverter: ~

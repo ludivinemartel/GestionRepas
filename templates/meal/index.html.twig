@@ -15,6 +15,10 @@ block body %}
 			<th>Temps de préparation</th>
 			<th>Catégories</th>
 			<th>Ingrédients</th>
+			<th>Kcal</th>
+			<th>Lipide (g)</th>
+			<th>Glucide (g)</th>
+			<th>Protéine (g)</th>
 			<th>Actions</th>
 		</tr>
 	</thead>
@@ -49,6 +53,10 @@ block body %}
 					{% endfor %}
 				</ul>
 			</td>
+			<td>{{ meal.kcal is not null ? meal.kcal : 'N/A' }}</td>
+			<td>{{ meal.lipide is not null ? meal.lipide : 'N/A' }}</td>
+			<td>{{ meal.glucide is not null ? meal.glucide : 'N/A' }}</td>
+			<td>{{ meal.proteine is not null ? meal.proteine : 'N/A' }}</td>
 			<td>
 				<a href="{{ path('app_meal_show', { id: meal.id }) }}">Voir</a>
 				<a href="{{ path('app_meal_edit', { id: meal.id }) }}">Modifier</a>
@@ -56,7 +64,7 @@ block body %}
 		</tr>
 		{% else %}
 		<tr>
-			<td colspan="6">Pas de repas trouvé</td>
+			<td colspan="10">Pas de repas trouvé</td>
 		</tr>
 		{% endfor %}
 	</tbody>
