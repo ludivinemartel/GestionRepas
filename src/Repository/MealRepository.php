@@ -37,4 +37,29 @@ class MealRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function findByUserAndType($user, $type)
+    {
+        return $this->createQueryBuilder('m')
+            ->andWhere('m.user = :user')
+            ->andWhere('m.Daily LIKE :type')
+            ->setParameter('user', $user)
+            ->setParameter('type', '%' . $type . '%')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findByUserCategoryAndType($user, $category, $type): array
+    {
+        return $this->createQueryBuilder('m')
+            ->innerJoin('m.Categories', 'c')
+            ->andWhere('m.user = :user')
+            ->andWhere('c.id = :category')
+            ->andWhere('m.Daily LIKE :type')
+            ->setParameter('user', $user)
+            ->setParameter('category', $category)
+            ->setParameter('type', '%' . $type . '%')
+            ->getQuery()
+            ->getResult();
+    }
 }

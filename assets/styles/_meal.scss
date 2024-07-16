@@ -1,36 +1,25 @@
-.container {
-	max-width: 1200px;
-	margin: 0 auto;
-	padding: 20px;
-}
-
-h1 {
-	font-size: 36px;
-	font-weight: bold;
-}
-
 input[type="text"],
 input[type="number"],
 textarea {
 	width: 100%;
 	padding: 10px;
-	margin: 10px 0;
+
 	border: 1px solid #ddd;
 	border-radius: 5px;
 }
 
-.button {
-	background-color: #00aaff;
-	color: #ffffff;
-	padding: 10px 20px;
-	border: none;
-	border-radius: 5px;
-	cursor: pointer;
-}
+// .button {
+// 	background-color: pink;
+// 	color: #ffffff;
+// 	padding: 10px 20px;
+// 	border: none;
+// 	border-radius: 5px;
+// 	cursor: pointer;
+// }
 
-.button-secondary {
-	background-color: #aaaaaa;
-}
+// .button-secondary {
+// 	background-color: #aaaaaa;
+// }
 
 .form-section {
 	margin-bottom: 20px;
@@ -65,11 +54,116 @@ textarea {
 }
 
 .add-button {
-	background-color: #00aaff;
+	background-color: pink;
 	color: white;
 	border: none;
 	padding: 10px 20px;
 	border-radius: 5px;
 	cursor: pointer;
 	margin-top: 10px;
+}
+
+.form-container {
+	display: flex;
+	justify-content: space-between;
+	gap: 20px;
+}
+
+.column {
+	flex: 1;
+}
+
+.form-section {
+	margin-bottom: 20px;
+}
+
+.rounded-checkbox {
+	width: 15px;
+	height: 15px;
+	border-radius: 50%;
+	appearance: none;
+	-webkit-appearance: none;
+	outline: none;
+	background-color: #fff;
+	border: 1px solid #ced4da;
+	transition: background-color 0.2s, border-color 0.2s;
+	cursor: pointer;
+}
+
+.rounded-checkbox:checked {
+	background-color: var(--primary-color);
+	border-color: var(--primary-color);
+}
+
+.rounded-checkbox:checked::before {
+	content: "";
+	display: block;
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background-color: #fff;
+	margin: 2px auto;
+}
+
+.custom-select {
+	display: flex;
+	width: 110%;
+	height: 42px;
+	padding: 6px 12px;
+	font-size: 14px;
+	color: #555;
+	border: 1px solid #ccc;
+	transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+}
+
+textarea[name="meal[description]"] {
+	display: none;
+}
+
+.image-container {
+	width: 100px;
+	height: 100px;
+	overflow: hidden;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 50%;
+}
+
+.card-img-top {
+	height: 200px;
+	object-fit: cover;
+}
+
+.card-title {
+	font-size: 1rem;
+	font-weight: bold;
+}
+
+.card-text ul {
+	list-style-type: none;
+	padding: 0;
+}
+
+.card-text li {
+	display: inline-block;
+	background-color: #f0f0f0;
+	padding: 5px 10px;
+	border-radius: 20px;
+	margin: 5px 5px 5px 0;
+}
+
+.kcal-info {
+	color: #d1bdcf;
+	font-weight: bold;
+}
+
+.masonry {
+	column-count: 3;
+	column-gap: 1rem;
+}
+
+.masonry-item {
+	break-inside: avoid;
+	margin-bottom: 1rem;
 }

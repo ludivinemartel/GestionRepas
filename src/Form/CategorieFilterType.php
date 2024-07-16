@@ -24,7 +24,7 @@ class CategorieFilterType extends AbstractType
             ->add('categorie', EntityType::class, [
                 'class' => Categorie::class,
                 'choice_label' => 'name',
-                'placeholder' => 'Toutes les catégories',
+                'placeholder' => 'Tous les tags repas',
                 'required' => false,
                 'query_builder' => function () {
                     return $this->userFiltreService->getQueryBuilderForCurrentUser(Categorie::class);

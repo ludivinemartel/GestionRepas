@@ -66,6 +66,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: PantryItem::class, mappedBy: 'user')]
     private Collection $pantryItems;
 
+    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
+    private ?UserPreference $UserPreference = null;
+
     public function __construct()
     {
         $this->meals = new ArrayCollection();
@@ -271,6 +274,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             if ($pantryItem->getUser() === $this) {
                 $pantryItem->setUser(null);
             }
+        }
+
+        return $this;
+    }
+
+    public function getUserPreference(): ?UserPreference
+    {
+        return $this->UserPreference;
+    }
+
+    public function setUserPreference(?UserPreference $UserPreference): static
+    {
+        $this->UserPreference = $UserPreference;
+
+        // set (or unset) the owning side of the relation if necessary
+        $newUser = $UserPreference === null ? null : $this;
+        if ($newUser !== $UserPreference->getUser()) {
+            $UserPreference->setUser($newUser);
         }
 
         return $this;

@@ -1,11 +1,12 @@
-{% extends 'base.html.twig' %}
-
-{% block title %}New Categorie{% endblock %}
-
-{% block body %}
-    <h1>Create new Categorie</h1>
-
-    {{ include('categorie/_form.html.twig') }}
-
-    <a href="{{ path('app_categorie_index') }}">back to list</a>
+{% extends 'base.html.twig' %} {% block title %}New Categorie{% endblock %} {%
+block body %}
+<div class="container">
+	<div class="d-flex align-items-center mt-3 mb-3">
+		<a href="{{ path('app_categorie_index') }}" class="mr-3">
+			<i class="bi bi-arrow-left-circle-fill"></i>
+		</a>
+		<h1>Créer un nouveau tags repas</h1>
+	</div>
+	{{ include("categorie/_form.html.twig") }}
+</div>
 {% endblock %}

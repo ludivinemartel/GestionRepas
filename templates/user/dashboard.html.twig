@@ -1,50 +1,11 @@
 {% extends 'base.html.twig' %} {% block title %} {{ parent() }} - Dashboard
 utilisateur {% endblock title %} {% block body %}
-<h2 class="mt-5 ml-5 mb-5">
-	Bienvenue sur votre tableau de gestion de vos repas
-	{{ app.user.firstName }} 🎉
-</h2>
-
-<div class="mb-3">
-	<a href="{{ path('app_meal_new') }}" class="btn btn-primary"
-		>Créer un repas</a
-	>
+<div class="d-flex">
+	<!-- Contenu principal -->
+	<div class="container mt-5">
+		<h2 class="mb-5">
+			Bienvenue sur votre tableau de gestion de vos repas
+			{{ app.user.firstName }} 🎉
+		</h2>
 </div>
-
-<div class="mb-3">
-	<a href="{{ path('app_meal_index') }}" class="btn btn-primary"
-		>Voir tous les repas</a
-	>
-</div>
-
-<div class="mb-3">
-	<a href="{{ path('app_categorie_index') }}" class="btn btn-primary"
-		>Ajouter une catégorie</a
-	>
-</div>
-
-<div class="mb-3">
-	<a href="{{ path('app_weekly_menu') }}" class="btn btn-primary"
-		>Créer un nouveau menu</a
-	>
-</div>
-
-<div class="mb-3">
-	<a href="{{ path('app_show_weekly_menu') }}" class="btn btn-primary"
-		>Voir menu hebdomadaire</a
-	>
-</div>
-
-<div class="mb-3">
-	<a href="{{ path('app_pantry_item_new') }}" class="btn btn-primary"
-		>Ajouter à mon garde-manger</a
-	>
-</div>
-
-<div class="mb-3">
-	<a href="{{ path('app_pantry_item_index') }}" class="btn btn-primary"
-		>Voir mon garde-manger</a
-	>
-</div>
-
 {% endblock %}

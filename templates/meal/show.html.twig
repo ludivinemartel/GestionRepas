@@ -1,66 +1,143 @@
-{% extends 'base.html.twig' %} {% block title %}Repas{% endblock %} {% block
-body %}
-<h1>{{ meal.Name }}</h1>
+{% extends 'base.html.twig' %} {% block title %}Détail repas{% endblock %} {%
+block body %}
 
-<table class="table">
-	<tbody>
-		<tr>
-			<th>Préparation</th>
-			<td>{{ meal.Description }}</td>
-		</tr>
-		<tr>
-			<th>Photo</th>
-			<td>
-				{% if meal.imageName %}
-				<img
-					src="{{ asset('images/meal/' ~ meal.imageName) }}"
-					alt="{{ meal.name }}"
-					style="max-width: 100px; max-height: 100px"
-				/>
-				{% else %} Pas d'image {% endif %}
-			</td>
-		</tr>
-		<tr>
-			<th>Kcal</th>
-			<td>{{ meal.Kcal is not null ? meal.Kcal : 'N/A' }}</td>
-		</tr>
-		<tr>
-			<th>Lipide</th>
-			<td>{{ meal.Lipide is not null ? meal.Lipide : 'N/A' }}</td>
-		</tr>
-		<tr>
-			<th>Glucide</th>
-			<td>{{ meal.Glucide is not null ? meal.Glucide : 'N/A' }}</td>
-		</tr>
-		<tr>
-			<th>Protéine</th>
-			<td>{{ meal.Proteine is not null ? meal.Proteine : 'N/A' }}</td>
-		</tr>
-		<tr>
-			<th>Nombre de personnes</th>
-			<td>{{ meal.NbPersonne }}</td>
-		</tr>
-		<tr>
-			<th>Temps de préparation</th>
-			<td>{{ meal.time }} minutes</td>
-		</tr>
-		<tr>
-			<th>Ingrédients</th>
-			<td>
-				<ul>
-					{% for ingredient in meal.Ingredients %}
-					<li>
-						{{ ingredient.name }} - {{ ingredient.quantity }}
-						{{ ingredient.mesure }}
-					</li>
-					{% endfor %}
-				</ul>
-			</td>
-		</tr>
-	</tbody>
-</table>
+<div class="container mt-3">
+	<div class="d-flex align-items-center mb-3">
+		<a href="{{ path('app_meal_index', { type: type }) }}" class="mr-3">
+			<i class="bi bi-arrow-left-circle-fill"></i>
+		</a>
+		<h1 class="mb-0">{{ meal.name }}</h1>
+		<div class="ml-auto">
+			<a
+				href="{{ path('app_meal_edit', { id: meal.id }) }}"
+				class="btn btn-warning mr-2"
+			>
+				<i class="bi bi-pencil"></i> Modifier
+			</a>
+			{{ include("meal/_delete_form.html.twig", { class: "d-inline" }) }}
+		</div>
+	</div>
 
-<a href="{{ path('app_meal_index') }}">Retour à la liste</a>
-<a href="{{ path('app_meal_edit', { id: meal.id }) }}">Modifier</a>
-{{ include("meal/_delete_form.html.twig") }}
+	<div class="row">
+		<div class="col-md-4">
+			{% if meal.imageName %}
+			<img
+				src="{{ asset('images/meal/' ~ meal.imageName) }}"
+				alt="{{ meal.name }}"
+				class="img-fluid rounded mb-3"
+			/>
+			{% else %}
+			<p>Pas d'image</p>
+			{% endif %}
+		</div>
+		<div class="col-md-8">
+			<div class="row">
+				<div class="col-md-6">
+					<h3>Ingrédients</h3>
+					<ul>
+						{% for ingredient in meal.ingredients %}
+						<li>
+							{{ ingredient.quantity }} {{ ingredient.mesure }}
+							{{ ingredient.name }}
+						</li>
+						{% endfor %}
+					</ul>
+				</div>
+
+				<div class="col-md-6">
+					<h3>Informations</h3>
+					<div>Pour {{ meal.nbPersonne }} personnes</div>
+					<div>Temps : {{ meal.time }} minutes</div>
+					<div>
+						{% for category in meal.categories %}
+						<span class="badge badge-secondary">{{ category.name }}</span>
+						{% endfor %}
+					</div>
+				</div>
+			</div>
+
+			<h3>Préparation</h3>
+			<p>{{ meal.description | raw }}</p>
+
+			<h3>Informations nutritionnelles</h3>
+			<p>
+				Kcal :
+				<strong>{{ meal.kcal is not null ? meal.kcal : 'N/A' }}</strong> pour
+				100 g
+			</p>
+			<div class="d-flex">
+				<div
+					class="chart-container"
+					style="height: 250px; width: 250px"
+					data-lipides="{{ meal.lipide is not null ? meal.lipide : 0 }}"
+					data-glucides="{{ meal.glucide is not null ? meal.glucide : 0 }}"
+					data-proteines="{{ meal.proteine is not null ? meal.proteine : 0 }}"
+				>
+					<canvas id="nutritionChart"></canvas>
+				</div>
+				<div
+					class="legend-container"
+					id="legend-container"
+					style="margin-left: 20px"
+				></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %} {% block javascripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+	document.addEventListener("DOMContentLoaded", function () {
+		var chartContainer = document.querySelector(".chart-container");
+		var lipides = chartContainer.getAttribute("data-lipides");
+		var glucides = chartContainer.getAttribute("data-glucides");
+		var proteines = chartContainer.getAttribute("data-proteines");
+
+		var ctx = document.getElementById("nutritionChart").getContext("2d");
+		var nutritionChart = new Chart(ctx, {
+			type: "pie",
+			data: {
+				labels: ["Lipides", "Glucides", "Protéines"],
+				datasets: [
+					{
+						label: "Informations nutritionnelles",
+						data: [lipides, glucides, proteines],
+						backgroundColor: [
+							"rgba(255, 99, 132, 0.2)",
+							"rgba(54, 162, 235, 0.2)",
+							"rgba(255, 206, 86, 0.2)",
+						],
+						borderColor: [
+							"rgba(255, 99, 132, 1)",
+							"rgba(54, 162, 235, 1)",
+							"rgba(255, 206, 86, 1)",
+						],
+						borderWidth: 1,
+					},
+				],
+			},
+			options: {
+				responsive: true,
+				maintainAspectRatio: false,
+				plugins: {
+					legend: {
+						display: true,
+						position: "right",
+						labels: {
+							boxWidth: 20,
+							padding: 10,
+							usePointStyle: true,
+							pointStyle: "circle",
+						},
+					},
+				},
+			},
+		});
+
+		// Générer la légende personnalisée
+		var legendContainer = document.getElementById("legend-container");
+		legendContainer.innerHTML = nutritionChart.generateLegend();
+	});
+</script>
 {% endblock %}

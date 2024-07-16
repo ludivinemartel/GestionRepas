@@ -15,35 +15,57 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\SecurityBundle\Security;
+use Knp\Component\Pager\PaginatorInterface;
 
 #[Route('/meal')]
 class MealController extends AbstractController
 {
+
+
     #[Route('/', name: 'app_meal_index', methods: ['GET', 'POST'])]
-    public function index(Request $request, MealRepository $mealRepository, Security $security): Response
+    public function index(Request $request, MealRepository $mealRepository, Security $security, PaginatorInterface $paginator): Response
     {
         $user = $security->getUser();
         $form = $this->createForm(CategorieFilterType::class);
         $form->handleRequest($request);
 
-        $meals = [];
+        $type = $request->query->get('type');
+        $mealsQuery = $mealRepository->createQueryBuilder('m')
+            ->andWhere('m.user = :user')
+            ->setParameter('user', $user);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $categorie = $form->get('categorie')->getData();
 
             if ($categorie) {
-                $meals = $mealRepository->findByUserAndCategory($user, $categorie->getId());
-            } else {
-                $meals = $mealRepository->findByUser($user);
+                $mealsQuery
+                    ->innerJoin('m.Categories', 'c')
+                    ->andWhere('c.id = :category')
+                    ->setParameter('category', $categorie->getId());
             }
-        } else {
-            $meals = $mealRepository->findByUser($user);
         }
+
+        if ($type) {
+            $mealsQuery->andWhere('m.Daily LIKE :type')->setParameter('type', '%' . $type . '%');
+        }
+
+        $pagination = $paginator->paginate(
+            $mealsQuery->getQuery(), /* query NOT result */
+            $request->query->getInt('page', 1), /*page number*/
+            6 /*limit per page*/
+        );
 
         return $this->render('meal/index.html.twig', [
             'form' => $form->createView(),
-            'meals' => $meals,
+            'pagination' => $pagination,
+            'type' => $type,
         ]);
+    }
+
+    #[Route('/types', name: 'app_meal_types', methods: ['GET'])]
+    public function types(): Response
+    {
+        return $this->render('meal/types.html.twig');
     }
 
     #[Route('/new', name: 'app_meal_new')]
@@ -109,7 +131,7 @@ class MealController extends AbstractController
 
             $this->addFlash('success', 'Meal created successfully with ingredients.');
 
-            return $this->redirectToRoute('app_meal_index');
+            return $this->redirectToRoute('app_meal_types');
         }
 
         return $this->render('meal/new.html.twig', [
@@ -117,13 +139,14 @@ class MealController extends AbstractController
         ]);
     }
 
-
-
     #[Route('/{id}', name: 'app_meal_show', methods: ['GET'])]
-    public function show(Meal $meal): Response
+    public function show(Meal $meal, Request $request): Response
     {
+        $type = $request->query->get('type');
+
         return $this->render('meal/show.html.twig', [
             'meal' => $meal,
+            'type' => $type,
         ]);
     }
 
@@ -134,21 +157,82 @@ class MealController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Handle deleted ingredients
+            $deletedIngredients = $request->request->get('deleted_ingredients');
+            if ($deletedIngredients) {
+                $deletedIngredients = json_decode($deletedIngredients, true);
+                foreach ($deletedIngredients as $ingredientId) {
+                    $ingredient = $entityManager->getRepository(Ingredient::class)->find($ingredientId);
+                    if ($ingredient) {
+                        $meal->removeIngredient($ingredient);
+                        $entityManager->remove($ingredient);
+                    }
+                }
+            }
+
+            // Handle new/updated ingredients
+            $ingredientDataJson = $form->get('ingredients_data')->getData();
+            $ingredientData = json_decode($ingredientDataJson, true);
+
+            if (is_array($ingredientData)) {
+                foreach ($ingredientData as $ingredientItem) {
+                    if (isset($ingredientItem['id']) && $ingredientItem['id']) {
+                        // Update existing ingredient
+                        $ingredient = $entityManager->getRepository(Ingredient::class)->find($ingredientItem['id']);
+                        if ($ingredient) {
+                            $ingredient->setName($ingredientItem['name']);
+                            $ingredient->setQuantity($ingredientItem['quantity']);
+                            $ingredient->setMesure($ingredientItem['measure']);
+                        }
+                    } else {
+                        // Add new ingredient
+                        $ingredient = new Ingredient();
+                        $ingredient->setName($ingredientItem['name']);
+                        $ingredient->setQuantity($ingredientItem['quantity']);
+                        $ingredient->setMesure($ingredientItem['measure']);
+                        $ingredient->setMeal($meal); // Set the meal
+                        if (isset($ingredientItem['food_composition_id_id'])) {
+                            $foodComposition = $entityManager->getRepository(FoodComposition::class)->find($ingredientItem['food_composition_id_id']);
+                            if ($foodComposition) {
+                                $ingredient->setFoodCompositionId($foodComposition);
+                            }
+                        }
+                        $meal->addIngredient($ingredient);
+                        $entityManager->persist($ingredient);
+                    }
+                }
+            }
+
             $entityManager->flush();
 
             return $this->redirectToRoute('app_meal_index', [], Response::HTTP_SEE_OTHER);
         }
 
+        // Pass the existing ingredients to the view
+        $ingredients = $meal->getIngredients()->map(function ($ingredient) {
+            return [
+                'id' => $ingredient->getId(),
+                'name' => $ingredient->getName(),
+                'quantity' => $ingredient->getQuantity(),
+                'measure' => $ingredient->getMesure(),
+                'food_composition_id_id' => $ingredient->getFoodCompositionId() ? $ingredient->getFoodCompositionId()->getId() : null,
+            ];
+        })->toArray();
+
         return $this->render('meal/edit.html.twig', [
             'meal' => $meal,
-            'form' => $form,
+            'form' => $form->createView(),
+            'ingredients' => json_encode($ingredients),
+            'description' => $meal->getDescription(),
         ]);
     }
+
+
 
     #[Route('/{id}', name: 'app_meal_delete', methods: ['POST'])]
     public function delete(Request $request, Meal $meal, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete' . $meal->getId(), $request->getPayload()->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $meal->getId(), $request->request->get('_token'))) {
             $entityManager->remove($meal);
             $entityManager->flush();
         }

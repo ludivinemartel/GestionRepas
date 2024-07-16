@@ -71,8 +71,11 @@ class Meal
     #[ORM\ManyToMany(targetEntity: Categorie::class, inversedBy: 'meals')]
     private Collection $Categories;
 
-    #[ORM\Column(type: Types::ARRAY, nullable: true)]
+    #[ORM\Column(type: Types::JSON, nullable: true)]
     private ?array $Daily = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?array $MealType = null;
 
     public function __construct()
     {
@@ -284,12 +287,24 @@ class Meal
 
     public function getDaily(): ?array
     {
-        return $this->Daily;
+        return $this->Daily ?? [];
     }
 
     public function setDaily(?array $Daily): static
     {
         $this->Daily = $Daily;
+
+        return $this;
+    }
+
+    public function getMealType(): ?array
+    {
+        return $this->MealType;
+    }
+
+    public function setMealType(?array $MealType): static
+    {
+        $this->MealType = $MealType;
 
         return $this;
     }

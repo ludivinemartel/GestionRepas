@@ -1,0 +1,102 @@
+:root {
+	--neutral-color: #f8f9f6;
+	--primary-color: #f9a685;
+	--primary-color-bold: #e4906f;
+	--secondary-color: #d1bdcf;
+	--secondary-color-bold: #ccaec9;
+	--complementary-color: #e2ad37;
+	--complementary-color-bold: #d7a028;
+	--bold-color: #f47e27;
+	--bold-bold-color: #dd7023;
+}
+
+/* Palette Succulents */
+.palette-palettes-1 {
+	--neutral-color: #f0f5e2;
+	--primary-color: #27768a;
+	--primary-color-bold: #216576;
+	--secondary-color: #72992f;
+	--secondary-color-bold: #628429;
+	--complementary-color: #589da4;
+	--complementary-color-bold: #488086;
+	--bold-color: #748d44;
+	--bold-bold-color: #5d7237;
+}
+
+/* Palette Purple Sky */
+.palette-palettes-2 {
+	--neutral-color: #e3b1d2;
+	--primary-color: #84c9ef;
+	--primary-color-bold: #66a9ce;
+	--secondary-color: #cbbddd;
+	--secondary-color-bold: #ae9dc4;
+	--complementary-color: #b4d2ed;
+	--complementary-color-bold: #8db0ce;
+	--bold-color: #dcb5d4;
+	--bold-bold-color: #d798ca;
+}
+
+/* Palette Lucky Charms */
+.palette-palettes-3 {
+	--neutral-color: #d9bb97;
+	--primary-color: #fae094;
+	--primary-color-bold: #f4d474;
+	--secondary-color: #f4c4c6;
+	--secondary-color-bold: #f09da0;
+	--complementary-color: #a0daea;
+	--complementary-color-bold: #83cfe3;
+	--bold-color: #a2d188;
+	--bold-bold-color: #8dcc6c;
+}
+
+/* Palette Summer Sea */
+.palette-palettes-4 {
+	--neutral-color: #e2f0ef;
+	--primary-color: #065758;
+	--primary-color-bold: #044344;
+	--secondary-color: #a9d4d6;
+	--secondary-color-bold: #78d3d8;
+	--complementary-color: #82c3c5;
+	--complementary-color-bold: #56b9bc;
+	--bold-color: #c46960;
+	--bold-bold-color: #c05b52;
+}
+
+/* Palette Preppy */
+.palette-palettes-5 {
+	--neutral-color: #eecbd1;
+	--primary-color: #c34a5c;
+	--primary-color-bold: #bd3247;
+	--secondary-color: #29425c;
+	--secondary-color-bold: #1b3755;
+	--complementary-color: #bcd9b0;
+	--complementary-color-bold: #92ba81;
+	--bold-color: #9ea544;
+	--bold-bold-color: #868b35;
+}
+
+.palette-preview {
+	display: flex;
+	align-items: center;
+	margin-bottom: 10px;
+}
+
+.palette-color {
+	width: 20px;
+	height: 20px;
+	display: inline-block;
+	margin-right: 5px;
+}
+
+.palette-option {
+	margin-bottom: 10px;
+}
+
+.palette-choices .form-check {
+	display: flex;
+	align-items: center;
+}
+
+.palette-choices .form-check-input {
+	margin-right: 10px;
+}

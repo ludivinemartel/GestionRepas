@@ -1,74 +1,97 @@
 {% extends 'base.html.twig' %} {% block title %}Meal index{% endblock %} {%
 block body %}
-<h1>Liste des repas</h1>
 
-{{ form_start(form) }}
-{{ form_row(form.categorie) }}
-<button type="submit">Filtrer</button>
-{{ form_end(form) }}
-
-<table class="table">
-	<thead>
-		<tr>
-			<th>Nom</th>
-			<th>Image</th>
-			<th>Temps de préparation</th>
-			<th>Catégories</th>
-			<th>Ingrédients</th>
-			<th>Kcal</th>
-			<th>Lipide (g)</th>
-			<th>Glucide (g)</th>
-			<th>Protéine (g)</th>
-			<th>Actions</th>
-		</tr>
-	</thead>
-	<tbody>
-		{% for meal in meals %}
-		<tr>
-			<td>{{ meal.name }}</td>
-			<td>
-				{% if meal.imageName %}
-				<img
-					src="{{ asset('images/meal/' ~ meal.imageName) }}"
-					alt="{{ meal.name }}"
-					style="max-width: 100px; max-height: 100px"
-				/>
-				{% else %} Pas d'image {% endif %}
-			</td>
-			<td>{{ meal.time }}</td>
-			<td>
-				<ul>
-					{% for category in meal.categories %}
-					<li>{{ category.name }}</li>
-					{% endfor %}
-				</ul>
-			</td>
-			<td>
-				<ul>
-					{% for ingredient in meal.ingredients %}
-					<li>
-						{{ ingredient.name }} - {{ ingredient.quantity }}
-						{{ ingredient.mesure }}
-					</li>
-					{% endfor %}
-				</ul>
-			</td>
-			<td>{{ meal.kcal is not null ? meal.kcal : 'N/A' }}</td>
-			<td>{{ meal.lipide is not null ? meal.lipide : 'N/A' }}</td>
-			<td>{{ meal.glucide is not null ? meal.glucide : 'N/A' }}</td>
-			<td>{{ meal.proteine is not null ? meal.proteine : 'N/A' }}</td>
-			<td>
-				<a href="{{ path('app_meal_show', { id: meal.id }) }}">Voir</a>
-				<a href="{{ path('app_meal_edit', { id: meal.id }) }}">Modifier</a>
-			</td>
-		</tr>
+<div class="container">
+	<div class="d-flex align-items-center mt-3 mb-3">
+		<a href="{{ path('app_meal_types') }}" class="mr-3">
+			<i class="bi bi-arrow-left-circle-fill"></i>
+		</a>
+		<h1 class="mb-0">
+			{% if type == 'breakfast' %} Liste des petits-déjeuners {% elseif type ==
+			'lunch' %} Liste des déjeuners {% elseif type == 'snack' %} Liste des
+			encas {% elseif type == 'dinner' %} Liste des dîners {% else %} Liste des
+			repas {% endif %}
+		</h1>
+	</div>
+	<div class="d-flex align-items-center mb-3">
+		{{ form_start(form, {'attr': {'class': 'd-flex align-items-center'}}) }}
+		<div class="mr-3">
+			{{
+				form_row(form.categorie, {
+					label: false,
+					attr: { class: "form-control custom-select" }
+				})
+			}}
+		</div>
+		<button class="btn btn-primary mr-3" type="submit">Filtrer</button>
+		{{ form_end(form) }}
+		<a href="{{ path('app_meal_new') }}" class="btn btn-success ml-auto">
+			Ajouter un nouveau repas
+		</a>
+	</div>
+	<div class="row">
+		{% for meal in pagination.items %}
+		<div class="col-md-4">
+			<a
+				href="{{ path('app_meal_show', { id: meal.id, type: type }) }}"
+				class="card-link"
+			>
+				<div class="card mb-4">
+					{% if meal.imageName %}
+					<img
+						src="{{ asset('images/meal/' ~ meal.imageName) }}"
+						class="card-img-top"
+						alt="{{ meal.name }}"
+					/>
+					{% else %}
+					<img
+						src="path/to/default-image.jpg"
+						class="card-img-top"
+						alt="Pas d'image"
+					/>
+					{% endif %}
+					<div class="card-body">
+						<h5 class="card-title">{{ meal.name }}</h5>
+						<div class="card-text">
+							{% for category in meal.categories %}
+							<span class="badge badge-secondary">{{ category.name }}</span>
+							{% endfor %}
+						</div>
+						<div class="kcal-info">{{ meal.kcal }} kcal</div>
+						<a
+							href="{{ path('app_meal_edit', { id: meal.id }) }}"
+							class="btn btn-warning mt-2"
+						>
+							<i class="bi bi-pencil"></i>
+						</a>
+						<form
+							method="post"
+							action="{{ path('app_meal_delete', { id: meal.id }) }}"
+							onsubmit="return confirm('Etes-vous sûr de vouloir supprimer ce repas ?');"
+							class="d-inline"
+						>
+							<input
+								type="hidden"
+								name="_token"
+								value="{{ csrf_token('delete' ~ meal.id) }}"
+							/>
+							<button class="btn btn-danger mt-2">
+								<i class="bi bi-trash"></i>
+							</button>
+						</form>
+					</div>
+				</div>
+			</a>
+		</div>
 		{% else %}
-		<tr>
-			<td colspan="10">Pas de repas trouvé</td>
-		</tr>
+		<div class="col-12">
+			<p>Pas de repas trouvé</p>
+		</div>
 		{% endfor %}
-	</tbody>
-</table>
+	</div>
 
-<a href="{{ path('app_meal_new') }}">Ajouter un nouveau repas</a>
+	<div class="pagination justify-content-center mt-4">
+		{{ knp_pagination_render(pagination) }}
+	</div>
+</div>
 {% endblock %}

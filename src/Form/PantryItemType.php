@@ -18,19 +18,43 @@ class PantryItemType extends AbstractType
             ->add('name', TextType::class, [
                 'label' => 'Nom'
             ])
-            ->add('quantity', IntegerType::class, [
-                'label' => 'Quantité'
+
+            ->add('InStock', ChoiceType::class, [
+                'label' => 'En stock',
+                'choices'  => [
+                    'En stock' => true,
+                    'A acheter' => false,
+                    'Neutre' => null,
+                ],
+                'required' => false,
+                'placeholder' => 'Selectionner statut',
             ])
-            ->add('measure', ChoiceType::class, [
-                'label' => 'Unité de mesure',
+
+            ->add('type', ChoiceType::class, [
+                'label' => 'Type',
+
                 'choices' => [
-                    '' => '',
-                    'ml' => 'ml',
-                    'cl' => 'cl',
-                    'dl' => 'dl',
-                    'l' => 'l',
-                    'g' => 'g',
-                    'kg' => 'kg',
+                    'Fruits' => 'Fruits',
+                    'Légumes' => 'Légumes',
+                    'Produits Laitiers' => 'Produits Laitiers',
+                    'Viande' => 'Viande',
+                    'Poisson' => 'Poisson',
+                    'Surgelé' => 'Surgelé',
+                    'Sauces' => 'Sauces',
+                    'Féculents' => 'Féculents',
+                    'Oléagineux' => 'Oléagineux',
+                    'Conserve' => 'Conserve',
+                    'Herbes' => 'Herbes',
+                    'Légumineuses' => 'Légumineuses',
+                    'Épicerie sèche' => 'Épicerie sèche',
+                    'Epices' => 'Epices',
+                    'Hygiène' => 'Hygiène',
+                    'Enfant' => 'Enfant',
+                    'Fournitures ménagères' => 'Fournitures ménagères',
+                    'Médicaments' => 'Médicaments',
+                    'Papeterie' => 'Papeterie',
+                    'Animaux' => 'Animaux',
+                    'Divers' => 'Divers',
                 ]
             ]);
     }

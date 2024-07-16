@@ -1,57 +1,144 @@
 {% extends 'base.html.twig' %} {% block title %}Menu Hebdomadaire{% endblock %}
 {% block body %}
+
 <div class="container">
-	<h1>Menu Hebdomadaire</h1>
+	<h1>Menu hebdomadaire</h1>
 
 	{{ form_start(form) }}
-
-	<div>
-		<label>Début de la semaine</label>
-		{{ form_widget(form.weekStart) }}
+	<div class="mb-4">
+		{{ form_widget(form.dateRange) }}
 	</div>
 
-	<div>
-		<label>Fin de la semaine</label>
-		{{ form_widget(form.weekEnd) }}
+	<div id="meal-options" style="display: none">
+		{% for mealType, meals in mealsByType %}
+		<div id="options-{{ mealType }}">
+			<option value="">Choisir un repas</option>
+			{% for meal in meals %}
+			<option value="{{ meal.id }}">{{ meal.name }}</option>
+			{% endfor %}
+		</div>
+		{% endfor %}
 	</div>
 
-	<div class="table-responsive" style="width: 100%">
-		<table class="table table-bordered">
-			<thead>
-				<tr style="height: 70px">
-					<th></th>
-					<th>Lundi</th>
-					<th>Mardi</th>
-					<th>Mercredi</th>
-					<th>Jeudi</th>
-					<th>Vendredi</th>
-					<th>Samedi</th>
-					<th>Dimanche</th>
-				</tr>
-			</thead>
-			<tbody>
-				{% for mealType, mealTypeLabel in { 'breakfast': 'Petit-déjeuner',
-				'lunch': 'Déjeuner', 'snack': 'Encas', 'dinner': 'Dîner' } %}
-				<tr style="height: 100px">
-					<th scope="row">{{ mealTypeLabel }}</th>
-					{% for day in ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi',
-					'Samedi', 'Dimanche'] %}
-					<td>
-						<select name="weekly_menu[meals][{{ day }}][{{ mealType }}]">
-							{% for meal in mealsByType[mealType] %}
-							<option value="{{ meal.id }}">{{ meal.name }}</option>
-							{% endfor %}
-						</select>
-					</td>
+	<div class="week-container">
+		{% for day in ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi',
+		'Dimanche'] %}
+		<div class="day-card">
+			<div class="card">
+				<div class="card-header">
+					<h4>{{ day }}</h4>
+				</div>
+				<div class="card-body">
+					{% for mealType, mealTypeLabel in { 'breakfast': 'Petit-déjeuner',
+					'lunch': 'Déjeuner', 'snack': 'Encas', 'dinner': 'Dîner' } %}
+					<div class="card meal-type-card">
+						<div class="card-body">
+							<h5>{{ mealTypeLabel }}</h5>
+							<div id="meal-container-{{ day }}-{{ mealType }}">
+								<div class="meal-entry mb-2">
+									<select
+										class="meal-select form-control"
+										name="weekly_menu[meals][{{ day }}][{{ mealType }}][]"
+									>
+										<option value="">Choisir un repas</option>
+										{% for meal in mealsByType[mealType] %}
+										<option value="{{ meal.id }}">{{ meal.name }}</option>
+										{% endfor %}
+									</select>
+								</div>
+							</div>
+							<button
+								type="button"
+								class="btn btn-success btn-sm"
+								onclick="addMealEntry('{{ day }}', '{{ mealType }}')"
+							>
+								+
+							</button>
+						</div>
+					</div>
 					{% endfor %}
-				</tr>
-				{% endfor %}
-			</tbody>
-		</table>
+				</div>
+			</div>
+		</div>
+		{% endfor %}
 	</div>
 
 	<button type="submit" class="btn btn-primary">Enregistrer</button>
-
 	{{ form_end(form) }}
 </div>
+{% endblock %} {% block javascripts %}
+{{ parent() }}
+
+<script>
+	document.addEventListener("DOMContentLoaded", function () {
+		// Initialiser Select2 sur les éléments existants après le chargement du document
+		$(".meal-select").select2();
+
+		const mealOptions = {};
+		document.querySelectorAll("#meal-options > div").forEach(function (el) {
+			const type = el.id.replace("options-", "");
+			mealOptions[type] = el.innerHTML;
+		});
+
+		window.addMealEntry = function (day, mealType) {
+			const container = document.getElementById(
+				`meal-container-${day}-${mealType}`
+			);
+			const newEntry = document.createElement("div");
+			newEntry.classList.add("meal-entry", "mb-2");
+			newEntry.innerHTML = `
+                <select class="meal-select" name="weekly_menu[meals][${day}][${mealType}][]">
+                    ${mealOptions[mealType]}
+                </select>
+            `;
+			container.appendChild(newEntry);
+			// Appliquer Select2 à la nouvelle entrée
+			$(newEntry).find(".meal-select").select2();
+		};
+
+		window.removeMealEntry = function (button) {
+			const mealEntry = button.closest(".meal-entry");
+			mealEntry.remove();
+		};
+
+		window.showSelectedMeal = function (selectElement) {
+			const selectedOption =
+				selectElement.options[selectElement.selectedIndex].text;
+			const mealContainer = selectElement.closest(".meal-entry");
+			const mealTextDiv = document.createElement("div");
+			mealTextDiv.classList.add("selected-meal");
+			mealTextDiv.innerHTML = `
+                <span>${selectedOption}</span>
+                <button type="button" class="remove-meal-btn" onclick="removeMealEntry(this)">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+
+			mealContainer.appendChild(mealTextDiv);
+			selectElement.style.display = "none";
+		};
+	});
+</script>
+
+<script>
+	document.addEventListener("DOMContentLoaded", function () {
+		flatpickr(".datepicker", {
+			locale: "fr",
+			mode: "range",
+			dateFormat: "d.m.Y",
+			onClose: function (selectedDates, dateStr, instance) {
+				if (selectedDates.length === 2) {
+					let startDate = selectedDates[0];
+					let endDate = selectedDates[1];
+					let formattedDate =
+						startDate.toLocaleDateString("fr-FR") +
+						" to " +
+						endDate.toLocaleDateString("fr-FR");
+					instance.input.value = formattedDate;
+				}
+			},
+		});
+	});
+</script>
+
 {% endblock %}

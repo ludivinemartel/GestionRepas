@@ -47,20 +47,6 @@ class CategorieController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_categorie_show', methods: ['GET'])]
-    public function show(Categorie $categorie, Security $security): Response
-    {
-        $user = $security->getUser();
-
-        if ($categorie->getUser() !== $user) {
-            throw $this->createAccessDeniedException();
-        }
-
-        return $this->render('categorie/show.html.twig', [
-            'categorie' => $categorie,
-        ]);
-    }
-
     #[Route('/{id}/edit', name: 'app_categorie_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Categorie $categorie, EntityManagerInterface $entityManager, Security $security): Response
     {

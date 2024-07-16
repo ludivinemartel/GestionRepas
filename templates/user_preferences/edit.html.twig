@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %} {% block title %}User Preferences{% endblock %}
+{% block body %}
+<div class="container">
+	<div class="d-flex align-items-center mt-3 mb-3">
+		<a href="{{ path('user_dashboard') }}" class="mr-3">
+			<i class="bi bi-arrow-left-circle-fill"></i>
+		</a>
+		<h1>Votre profil</h1>
+	</div>
+
+	{{ form_start(form) }}
+	<div>
+		{{ form_label(form.palette) }}
+		{% for child in form.palette %}
+		<div class="form-check">
+			{{ form_widget(child) }}
+			<label class="form-check-label">
+				{{ child.vars.label | raw }}
+			</label>
+		</div>
+		{% endfor %}
+		{{ form_errors(form.palette) }}
+	</div>
+
+	<button class="btn btn-primary">
+		{{ button_label|default('Enregistrer') }}
+	</button>
+	{{ form_end(form) }}
+</div>
+{% endblock %}

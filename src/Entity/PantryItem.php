@@ -25,6 +25,15 @@ class PantryItem
     #[ORM\ManyToOne(inversedBy: 'pantryItems')]
     private ?User $user = null;
 
+    #[ORM\Column(length: 150, nullable: true)]
+    private ?string $type = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $position = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?bool $InStock = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -74,6 +83,42 @@ class PantryItem
     public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function setType(?string $type): static
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    public function getPosition(): ?int
+    {
+        return $this->position;
+    }
+
+    public function setPosition(?int $position): static
+    {
+        $this->position = $position;
+
+        return $this;
+    }
+
+    public function isInStock(): ?bool
+    {
+        return $this->InStock;
+    }
+
+    public function setInStock(?bool $InStock): static
+    {
+        $this->InStock = $InStock;
 
         return $this;
     }

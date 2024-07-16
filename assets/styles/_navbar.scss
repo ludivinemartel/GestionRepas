@@ -1,0 +1,37 @@
+.navbar {
+	width: 250px;
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: 100%;
+	padding: 0;
+	background: var(--primary-color);
+}
+
+.container-fluid {
+	height: 100%;
+}
+
+.navbar-collapse {
+	flex-grow: 1;
+}
+
+.navbar-nav {
+	margin-bottom: 1rem;
+}
+
+.mt-auto {
+	margin-top: auto;
+}
+
+.nav-link {
+	color: var(--neutral-color);
+
+	&:hover {
+		color: #f0f0f0;
+	}
+}
+
+.mt-custom {
+	margin-top: 30px;
+}

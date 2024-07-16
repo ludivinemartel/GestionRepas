@@ -1,0 +1,91 @@
+.btn-primary {
+	background-color: var(--primary-color);
+	border-color: var(--primary-color);
+	color: var(--neutral-color);
+
+	&:hover {
+		background-color: var(--bold-color);
+		border-color: var(--bold-color);
+	}
+
+	&:active,
+	&:focus {
+		background-color: var(--bold-color) !important;
+		border-color: var(--bold-color) !important;
+		box-shadow: 0 0 0 0.2rem rgba($color: var(--primary-color), $alpha: 0.5) !important;
+	}
+}
+
+.bi-arrow-left-circle-fill {
+	color: var(--secondary-color);
+	font-size: 2rem;
+}
+
+.btn-danger {
+	background-color: var(--bold-color);
+	border-color: var(--bold-color);
+	color: var(--neutral-color);
+
+	&:hover {
+		background-color: var(--bold-bold-color);
+		border-color: var(--bold-bold-color);
+	}
+
+	&:active,
+	&:focus {
+		background-color: var(--bold-bold-color) !important;
+		border-color: var(--bold-bold-color) !important;
+		box-shadow: 0 0 0 0.2rem rgba($color: var(--bold-bold-color), $alpha: 0.5) !important;
+	}
+}
+
+.btn-warning {
+	background-color: var(--complementary-color);
+	border-color: var(--complementary-color);
+	color: var(--neutral-color);
+
+	&:hover {
+		background-color: var(--complementary-color-bold);
+		border-color: var(--complementary-color-bold);
+	}
+
+	&:active,
+	&:focus {
+		background-color: var(--complementary-color-bold) !important;
+		border-color: var(--complementary-color-bold) !important;
+		box-shadow: 0 0 0 0.2rem
+			rgba($color: var(--complementary-color), $alpha: 0.5) !important;
+	}
+}
+
+.btn-success {
+	background-color: var(--secondary-color);
+	border-color: var(--secondary-color);
+	color: var(--neutral-color);
+
+	&:hover {
+		background-color: var(--secondary-color-bold);
+		border-color: var(--secondary-color-bold);
+	}
+
+	&:active,
+	&:focus {
+		background-color: var(--secondary-color-bold) !important;
+		border-color: var(--secondary-color-bold) !important;
+		box-shadow: 0 0 0 0.2rem
+			rgba($color: var(--secondary-color-bold), $alpha: 0.5) !important;
+	}
+}
+
+.card-title {
+	color: var(--bold-color);
+}
+
+.badge-secondary {
+	background-color: var(--complementary-color) !important;
+}
+
+.badge {
+	border-radius: 1.25rem;
+	padding: 0.3em 0.7em;
+}
