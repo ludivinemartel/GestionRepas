@@ -17,14 +17,17 @@ class WeeklyMeal
     #[ORM\ManyToOne(inversedBy: 'weeklyMeals')]
     private ?User $user = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $weekStart = null;
-
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $weekEnd = null;
-
     #[ORM\Column(type: Types::JSON, nullable: true)]
     private ?array $meals = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $dateRange = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $weekStart = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $weekEnd = null;
 
     public function getId(): ?int
     {
@@ -39,6 +42,30 @@ class WeeklyMeal
     public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getMeals(): ?array
+    {
+        return $this->meals;
+    }
+
+    public function setMeals(?array $meals): static
+    {
+        $this->meals = $meals;
+
+        return $this;
+    }
+
+    public function getDateRange(): ?string
+    {
+        return $this->dateRange;
+    }
+
+    public function setDateRange(?string $dateRange): static
+    {
+        $this->dateRange = $dateRange;
 
         return $this;
     }
@@ -63,18 +90,6 @@ class WeeklyMeal
     public function setWeekEnd(?\DateTimeInterface $weekEnd): static
     {
         $this->weekEnd = $weekEnd;
-
-        return $this;
-    }
-
-    public function getMeals(): ?array
-    {
-        return $this->meals;
-    }
-
-    public function setMeals(?array $meals): static
-    {
-        $this->meals = $meals;
 
         return $this;
     }

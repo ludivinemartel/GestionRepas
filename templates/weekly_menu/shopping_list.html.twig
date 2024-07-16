@@ -1,11 +1,8 @@
 {% extends 'base.html.twig' %} {% block title %}Liste de courses{% endblock %}
 {% block body %}
 <div class="container">
-	<h1>
-		Liste de courses pour la semaine du {{ weekStart|date('d/m/Y') }} au
-		{{ weekEnd|date('d/m/Y') }}
-	</h1>
-
+	<h1>Liste de courses</h1>
+	<h4>Du {{ weekStart|date('d/m/Y') }} au {{ weekEnd|date('d/m/Y') }}</h4>
 	<form>
 		<ul class="list-group">
 			{% for ingredient in ingredients %}

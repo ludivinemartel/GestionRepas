@@ -1,34 +1,55 @@
 {% extends 'base.html.twig' %} {% block title %}Categories{% endblock %} {%
 block body %}
-<h1>Liste des categories</h1>
+<div class="container">
+	<div class="d-flex align-items-center mt-3 mb-3">
+		<a href="{{ path('user_dashboard') }}" class="mr-3">
+			<i class="bi bi-arrow-left-circle-fill"></i>
+		</a>
+		<h1>Liste de vos tags repas</h1>
+	</div>
 
-<table class="table">
-	<thead>
-		<tr>
-			<th>Nom</th>
-			<th>Actions</th>
-		</tr>
-	</thead>
-	<tbody>
+	<a href="{{ path('app_categorie_new') }}" class="btn btn-success mb-4">
+		Ajouter un nouveau tag
+	</a>
+
+	<div class="row">
 		{% for categorie in categories %}
-		<tr>
-			<td>{{ categorie.Name }}</td>
-			<td>
-				<a href="{{ path('app_categorie_show', { id: categorie.id }) }}"
-					>Voir</a
-				>
-				<a href="{{ path('app_categorie_edit', { id: categorie.id }) }}"
-					>Modifier</a
-				>
-			</td>
-		</tr>
-		{% else %}
-		<tr>
-			<td colspan="3">no records found</td>
-		</tr>
-		{% endfor %}
-	</tbody>
-</table>
+		<div class="col-md-4 mb-4">
+			<div class="card">
+				<div class="card-body">
+					<h5 class="card-title">{{ categorie.Name }}</h5>
+					<div class="d-flex justify-content-end">
+						<a
+							href="{{ path('app_categorie_edit', { id: categorie.id }) }}"
+							class="btn btn-warning mt-2"
+						>
+							<i class="bi bi-pencil"></i>
+						</a>
 
-<a href="{{ path('app_categorie_new') }}">Ajouter</a>
+						<form
+							method="post"
+							action="{{ path('app_categorie_delete', { id: categorie.id }) }}"
+							onsubmit="return confirm('Etes-vous sûr de vouloir supprimer ce tag ?');"
+							class="d-inline"
+						>
+							<input
+								type="hidden"
+								name="_token"
+								value="{{ csrf_token('delete' ~ categorie.id) }}"
+							/>
+							<button class="btn btn-danger mt-2">
+								<i class="bi bi-trash"></i>
+							</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		{% else %}
+		<div class="col-12">
+			<p class="text-center">Pas de tags trouvés</p>
+		</div>
+		{% endfor %}
+	</div>
+</div>
 {% endblock %}

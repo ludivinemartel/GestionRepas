@@ -1,11 +1,24 @@
 * {
 	margin: 0;
-}
-
-:root {
-	--font: "Montserrat", sans-serif;
+	padding: 0;
 }
 
 body {
-	font-family: var(--font);
+	font-family: "Montserrat", sans-serif;
+}
+
+h1,h2,
+h3 {
+	color: var(--primary-color);
+}
+
+label {
+	color: var(--secondary-color);
+}
+
+.container {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 20px;
+	margin-left: 330px;
 }

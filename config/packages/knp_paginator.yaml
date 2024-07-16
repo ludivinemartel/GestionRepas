@@ -1,0 +1,10 @@
+knp_paginator:
+  page_range: 5 # Number of pages in the sliding pagination
+  default_options:
+    page_name: page # page query parameter name
+    sort_field_name: sort # sort field query parameter name
+    sort_direction_name: direction # sort direction query parameter name
+    distinct: true # ensure distinct results, useful when ORM queries include joins
+  template:
+    pagination: "bundles/KnpPaginatorBundle/pagination.html.twig"
+    sortable: "@KnpPaginator/Pagination/sortable_link.html.twig" # sort link template

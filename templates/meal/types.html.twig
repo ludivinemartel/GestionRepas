@@ -1,0 +1,89 @@
+{% extends 'base.html.twig' %} {% block title %}Types de repas{% endblock %} {%
+block body %}
+<div class="container">
+	<div class="d-flex align-items-center mt-3 mb-3">
+		<a href="{{ path('user_dashboard') }}" class="mr-3">
+			<i class="bi bi-arrow-left-circle-fill"></i>
+		</a>
+		<h1>Liste des repas</h1>
+	</div>
+	<div class="row">
+		<div class="col-md-6 mb-4">
+			<a
+				href="{{ path('app_meal_index', { type: 'breakfast' }) }}"
+				class="card-link"
+			>
+				<div class="card h-100">
+					<img
+						src="{{ asset('images/breakfast.jpg') }}"
+						class="card-img-top"
+						alt="Petit-déjeuner"
+					/>
+					<div
+						class="card-body d-flex justify-content-center align-items-center"
+					>
+						<h5 class="card-title">Petit-déjeuner</h5>
+					</div>
+				</div>
+			</a>
+		</div>
+		<div class="col-md-6 mb-4">
+			<a
+				href="{{ path('app_meal_index', { type: 'lunch' }) }}"
+				class="card-link"
+			>
+				<div class="card h-100">
+					<img
+						src="{{ asset('images/lunch.jpg') }}"
+						class="card-img-top"
+						alt="Déjeuner"
+					/>
+					<div
+						class="card-body d-flex justify-content-center align-items-center"
+					>
+						<h5 class="card-title">Déjeuner</h5>
+					</div>
+				</div>
+			</a>
+		</div>
+		<div class="col-md-6 mb-4">
+			<a
+				href="{{ path('app_meal_index', { type: 'snack' }) }}"
+				class="card-link"
+			>
+				<div class="card h-100">
+					<img
+						src="{{ asset('images/snack.jpg') }}"
+						class="card-img-top"
+						alt="Encas"
+					/>
+					<div
+						class="card-body d-flex justify-content-center align-items-center"
+					>
+						<h5 class="card-title">Encas</h5>
+					</div>
+				</div>
+			</a>
+		</div>
+		<div class="col-md-6 mb-4">
+			<a
+				href="{{ path('app_meal_index', { type: 'dinner' }) }}"
+				class="card-link"
+			>
+				<div class="card h-100">
+					<img
+						src="{{ asset('images/dinner.jpg') }}"
+						class="card-img-top"
+						alt="Dîner"
+					/>
+					<div
+						class="card-body d-flex justify-content-center align-items-center"
+					>
+						<h5 class="card-title">Dîner</h5>
+					</div>
+				</div>
+			</a>
+		</div>
+	</div>
+</div>
+{% endblock %}

@@ -38,6 +38,9 @@ class MealType extends AbstractType
             ->add('description', TextareaType::class, [
                 'label' => 'Préparation',
                 'required' => true,
+                'attr' => [
+                    'id' => 'quill-editor',
+                ],
             ])
             ->add('NbPersonne', IntegerType::class, [
                 'label' => 'Nombre de personne',
@@ -60,8 +63,8 @@ class MealType extends AbstractType
                 },
                 'choice_label' => 'name',
                 'multiple' => true,
-                'expanded' => true,
-                'label' => 'Catégories',
+                'expanded' => false,
+                'attr' => ['class' => 'select2'],
             ])
             ->add('daily', ChoiceType::class, [
                 'choices' => [
@@ -94,17 +97,35 @@ class MealType extends AbstractType
                 'required' => false,
                 'label' => 'Unité de mesure',
                 'choices' => [
-                    '' => '',
+                    'g' => 'g',
                     'ml' => 'ml',
                     'cl' => 'cl',
-                    'dl' => 'dl',
                     'l' => 'l',
-                    'g' => 'g',
                     'kg' => 'kg',
+                    'portion' => 'portion',
+                    'tranche' => 'tranche',
+                    'piece' => 'piece',
+                    'cuillère à soupe' => 'cas',
+                    'cuillère à café' => 'cac',
+                    'tasse' => 'tasse',
+                    'verre' => 'verre',
+                    'bol' => 'bol',
                 ],
             ])
             ->add('ingredients_data', HiddenType::class, [
                 'mapped' => false,
+            ])
+            ->add('MealType', ChoiceType::class, [
+                'choices' => [
+                    'Entrée' => 'entree',
+                    'Plat' => 'maincourse',
+                    'Dessert' => 'dessert',
+                    'Boisson' => 'beverages',
+                ],
+                'expanded' => true,
+                'required' => true,
+                'label' => 'Type de repas',
+                'multiple' => true,
             ]);
     }
 

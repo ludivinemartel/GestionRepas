@@ -1,15 +1,41 @@
 {% extends 'base.html.twig' %} {% block title %}Menu Hebdomadaire{% endblock %}
 {% block body %}
 <div class="container">
-	<h1>Menu Hebdomadaire</h1>
+	<div class="d-flex align-items-center mt-3 mb-3">
+		<a href="{{ path('app_show_archived_weekly_menu') }}" class="mr-3">
+			<i class="bi bi-arrow-left-circle-fill"></i>
+		</a>
+		<h1>Mon menu de la semaine</h1>
+	</div>
 
-	<a href="{{ path('app_show_weekly_menu') }}" class="btn btn-secondary mb-3"
-		>Retour à la liste</a
-	>
-
-	<h2>
-		Semaine du {{ weekStart|date('d/m/Y') }} au {{ weekEnd|date('d/m/Y') }}
-	</h2>
+	{% if weekStart and weekEnd %}
+	<div class="d-flex align-items-center justify-content-between mb-3">
+		<h4 class="mb-0">
+			Du {{ weekStart|date('d/m/Y') }} au {{ weekEnd|date('d/m/Y') }}
+		</h4>
+		<div>
+			<a
+				href="{{ path('app_edit_weekly_menu', { id: weeklyMeal.id }) }}"
+				class="btn btn-warning mt-2"
+			>
+				<i class="bi bi-pencil"></i>
+			</a>
+			<form
+				action="{{ path('app_delete_weekly_menu', { id: weeklyMeal.id }) }}"
+				method="post"
+				style="display: inline-block"
+			>
+				<input
+					type="hidden"
+					name="_token"
+					value="{{ csrf_token('delete' ~ weeklyMeal.id) }}"
+				/>
+				<button class="btn btn-danger mt-2">
+					<i class="bi bi-trash"></i>
+				</button>
+			</form>
+		</div>
+	</div>
 
 	<div class="table-responsive" style="width: 100%">
 		<table class="table table-bordered">
@@ -33,9 +59,12 @@
 					{% for day in ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi',
 					'Samedi', 'Dimanche'] %}
 					<td>
-						{% if mealsByDayAndType[day][mealType] is defined %}
-						{{ mealsByDayAndType[day][mealType].name }}
-						{% else %} - {% endif %}
+						{% if mealsByDayAndType[day][mealType] is defined %} {% for subType,
+						meal in mealsByDayAndType[day][mealType] %} {% if meal %}
+						<div>{{ meal.name }}</div>
+						{% else %}
+						<div>-</div>
+						{% endif %} {% endfor %} {% else %} - {% endif %}
 					</td>
 					{% endfor %}
 				</tr>
@@ -49,9 +78,8 @@
 		class="btn btn-primary mt-3"
 		>Générer la liste de courses</a
 	>
-
-	<a href="{{ path('app_show_weekly_menu') }}" class="btn btn-secondary mt-3"
-		>Retour à la liste</a
-	>
+	{% else %}
+	<p>Pas de menu cette semaine.</p>
+	{% endif %}
 </div>
 {% endblock %}
