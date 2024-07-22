@@ -1,7 +1,5 @@
 <?php
 
-// src/Controller/UserPreferenceController.php
-
 namespace App\Controller;
 
 use App\Entity\UserPreference;
@@ -30,6 +28,21 @@ class UserPreferenceController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $diet = $userPreference->getDiet();
+            $numberOfChildren = $userPreference->getNumberOfChildren();
+
+            // Set default categories based on diet
+            if ($diet == 'vegan') {
+                $userPreference->setStockCategories(array_diff($userPreference->getStockCategories(), ['Viande', 'Poisson', 'Produits Laitiers']));
+            } elseif ($diet == 'vegetarian') {
+                $userPreference->setStockCategories(array_diff($userPreference->getStockCategories(), ['Viande', 'Poisson']));
+            }
+
+            // Remove 'Enfant' category if no children
+            if ($numberOfChildren === 0) {
+                $userPreference->setStockCategories(array_diff($userPreference->getStockCategories(), ['Enfant']));
+            }
+
             $em->persist($userPreference);
             $em->flush();
 

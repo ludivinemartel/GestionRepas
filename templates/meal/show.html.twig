@@ -1,6 +1,5 @@
 {% extends 'base.html.twig' %} {% block title %}Détail repas{% endblock %} {%
 block body %}
-
 <div class="container mt-3">
 	<div class="d-flex align-items-center mb-3">
 		<a href="{{ path('app_meal_index', { type: type }) }}" class="mr-3">
@@ -62,16 +61,15 @@ block body %}
 			<h3>Informations nutritionnelles</h3>
 			<p>
 				Kcal :
-				<strong>{{ meal.kcal is not null ? meal.kcal : 'N/A' }}</strong> pour
-				100 g
+				<strong>{{ totalKcal }}</strong> pour 100 g
 			</p>
 			<div class="d-flex">
 				<div
 					class="chart-container"
 					style="height: 250px; width: 250px"
-					data-lipides="{{ meal.lipide is not null ? meal.lipide : 0 }}"
-					data-glucides="{{ meal.glucide is not null ? meal.glucide : 0 }}"
-					data-proteines="{{ meal.proteine is not null ? meal.proteine : 0 }}"
+					data-lipides="{{ totalLipide }}"
+					data-glucides="{{ totalGlucide }}"
+					data-proteines="{{ totalProteine }}"
 				>
 					<canvas id="nutritionChart"></canvas>
 				</div>
@@ -84,7 +82,6 @@ block body %}
 		</div>
 	</div>
 </div>
-
 {% endblock %} {% block javascripts %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>

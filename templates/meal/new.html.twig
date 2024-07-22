@@ -1,4 +1,7 @@
-{% extends 'base.html.twig' %} {% block title %}Ajouter repas{% endblock %}
-{%block body %} {% include 'meal/_form.html.twig' with { 'form': form,
-'title':'Créer un nouveau repas', 'button_label': 'Enregistrer' } %} {% endblock
-%}
+{% extends 'base.html.twig' %}
+
+{% block title %}Création{% endblock %}
+
+{% block body %}
+    {% include 'meal/_form.html.twig' with { 'form': form, 'title': 'Créer un nouveau repas', 'button_label': 'Enregistrer' } %}
+{% endblock %}

@@ -13,7 +13,6 @@
 		<link
 			rel="stylesheet"
 			href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-			crossorigin="anonymous"
 		/>
 
 		<!-- Bootstrap Icons CSS -->
@@ -52,26 +51,30 @@
 		}}
 		{% endblock %}
 	</head>
-	<header class="headerNavbar">{% include '_navbar.html.twig' %}</header>
 	<body
 		class="{% if app.user and app.user.UserPreference %}palette-{{
 			app.user.UserPreference.palette
 		}}{% endif %}"
 	>
+		<header class="headerNavbar">{% include '_navbar.html.twig' %}</header>
 		{% block body %}{% endblock %} {% include '_footer.html.twig' %} {% block
 		javascripts %}
 		<!-- jQuery -->
 		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+		<!-- Popper.js -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+		<!-- Bootstrap JS -->
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 		<!-- Select2 JS -->
 		<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-		<!-- Bootstrap JS -->
-		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
 		<!-- Quill JS -->
 		<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
 		<!-- Chart.js -->
 		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+		<!-- Flatpickr -->
 		<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 		<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
+
 		{{ encore_entry_script_tags("app") }}
 		{% endblock %}
 	</body>

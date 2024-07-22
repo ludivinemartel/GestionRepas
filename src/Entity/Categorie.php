@@ -25,7 +25,6 @@ class Categorie
     private Collection $meals;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'categories')]
-    #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
     public function __construct()

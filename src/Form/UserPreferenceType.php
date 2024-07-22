@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\UserPreference;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -40,6 +41,52 @@ class UserPreferenceType extends AbstractType
                 'attr' => [
                     'class' => 'palette-choices'
                 ],
+            ])
+            ->add('numberOfAdults', IntegerType::class, [
+                'label' => 'Nombre d\'adultes',
+                'required' => false,
+            ])
+            ->add('numberOfChildren', IntegerType::class, [
+                'label' => 'Nombre d\'enfants',
+                'required' => false,
+            ])
+            ->add('diet', ChoiceType::class, [
+                'choices' => [
+                    'Omnivore' => 'omnivore',
+                    'Végétarien' => 'vegetarian',
+                    'Végan' => 'vegan',
+                    'Autre' => 'other',
+                ],
+                'label' => 'Régime alimentaire',
+                'required' => false,
+            ])
+            ->add('stockCategories', ChoiceType::class, [
+                'choices' => [
+                    'Fruits' => 'Fruits',
+                    'Légumes' => 'Légumes',
+                    'Produits Laitiers' => 'Produits Laitiers',
+                    'Viande' => 'Viande',
+                    'Poisson' => 'Poisson',
+                    'Surgelé' => 'Surgelé',
+                    'Sauces' => 'Sauces',
+                    'Féculents' => 'Féculents',
+                    'Oléagineux' => 'Oléagineux',
+                    'Conserve' => 'Conserve',
+                    'Herbes' => 'Herbes',
+                    'Légumineuses' => 'Légumineuses',
+                    'Épicerie sèche' => 'Épicerie sèche',
+                    'Epices' => 'Epices',
+                    'Hygiène' => 'Hygiène',
+                    'Enfant' => 'Enfant',
+                    'Fournitures ménagères' => 'Fournitures ménagères',
+                    'Médicaments' => 'Médicaments',
+                    'Papeterie' => 'Papeterie',
+                    'Animaux' => 'Animaux',
+                    'Divers' => 'Divers',
+                ],
+                'label' => 'Catégories de stock',
+                'expanded' => true,
+                'multiple' => true,
             ]);
     }
 
