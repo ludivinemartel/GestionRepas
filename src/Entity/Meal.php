@@ -22,7 +22,7 @@ class Meal
     #[ORM\Column(length: 150)]
     private ?string $Name = null;
 
-    #[ORM\Column(length: 2000)]
+    #[ORM\Column(type: 'text', length: 20000, nullable: true)]
     private ?string $Description = null;
 
     #[ORM\Column(nullable: true)]
@@ -37,7 +37,7 @@ class Meal
     #[ORM\Column(nullable: true)]
     private ?int $Proteine = null;
 
-    #[ORM\ManyToOne(inversedBy: 'meals')]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'meals')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 

@@ -1,81 +1,119 @@
 {% block content %}
 <nav class="navbar navbar-expand-lg flex-column vh-100">
 	<div class="container-fluid d-flex flex-column mt-custom">
+		<div class="navbar-header">
+			<a class="navbar-brand" href="{{ path('app_home') }}">
+				<img
+					src="{{ asset('images/logo.png') }}"
+					alt="Logo"
+					style="height: 130px"
+				/>
+			</a>
+		</div>
 		<div class="collapse navbar-collapse flex-column" id="navbarColor01">
 			<ul class="navbar-nav flex-column w-100">
 				<li class="nav-item">
-					<a class="nav-link" href="{{ path('app_home') }}">Accueil</a>
+					<a class="nav-link" href="{{ path('app_home') }}">
+						<i class="fas fa-home"></i> Accueil
+					</a>
 				</li>
 				{% if app.user %} {% if 'ROLE_ADMIN' in app.user.roles %}
-				<!-- Lien spécifique pour ROLE_ADMIN si nécessaire -->
+				<!-- Lien spécifique pour ROLE_ADMIN  -->
 				{% elseif 'ROLE_USER' in app.user.roles %}
 				<li class="nav-item">
-					<a class="nav-link" href="{{ path('user_dashboard') }}"
-						>Tableau de bord</a
-					>
+					<a class="nav-link" href="{{ path('user_dashboard') }}">
+						<i class="fas fa-tachometer-alt"></i> Tableau de bord
+					</a>
 				</li>
 				{% endif %} {% endif %}
+
+				<li><hr class="dropdown-divider" /></li>
+
+				<!-- Menu Gestion repas -->
 				<li class="nav-item">
-					<a class="nav-link" href="{{ path('app_meal_new') }}"
-						>Créer un repas</a
+					<a
+						class="nav-link d-flex justify-content-between align-items-center"
+						href="#gestionRepasCollapse"
+						data-toggle="collapse"
+						role="button"
+						aria-expanded="false"
+						aria-controls="gestionRepasCollapse"
 					>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="{{ path('app_meal_types') }}"
-						>Voir tous vos repas</a
-					>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="{{ path('app_categorie_index') }}"
-						>Vos tags repas</a
-					>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="{{ path('app_weekly_menu') }}"
-						>Créer un menu</a
-					>
+						<span><i class="fas fa-utensils"></i> Gestion repas</span>
+						<i class="fas fa-chevron-down"></i>
+					</a>
+					<div class="collapse" id="gestionRepasCollapse">
+						<a class="nav-link" href="{{ path('app_meal_new') }}"
+							><i class="fas fa-plus"></i> Créer un repas</a
+						>
+						<a class="nav-link" href="{{ path('app_meal_types') }}"
+							><i class="fas fa-utensils"></i> Voir mes repas</a
+						>
+						<a class="nav-link" href="{{ path('app_categorie_index') }}"
+							><i class="fas fa-tags"></i> Mes tags repas</a
+						>
+					</div>
 				</li>
 
+				<!-- Menu Gestion menu -->
 				<li class="nav-item">
-					<a class="nav-link" href="{{ path('app_show_current_weekly_menu') }}"
-						>Mon menu de la semaine</a
+					<a
+						class="nav-link d-flex justify-content-between align-items-center"
+						href="#gestionMenuCollapse"
+						data-toggle="collapse"
+						role="button"
+						aria-expanded="false"
+						aria-controls="gestionMenuCollapse"
 					>
+						<span><i class="fas fa-calendar-alt"></i> Gestion menus</span>
+						<i class="fas fa-chevron-down"></i>
+					</a>
+					<div class="collapse" id="gestionMenuCollapse">
+						<a class="nav-link" href="{{ path('app_weekly_menu') }}"
+							><i class="fas fa-calendar-alt"></i> Créer un menu</a
+						>
+						<a
+							class="nav-link"
+							href="{{ path('app_show_current_weekly_menu') }}"
+							><i class="fas fa-calendar-week"></i> Mon menu hebdo</a
+						>
+						<a
+							class="nav-link"
+							href="{{ path('app_show_archived_weekly_menu') }}"
+							><i class="fas fa-archive"></i> Menus sauvegardés</a
+						>
+					</div>
 				</li>
-
+				<li><hr class="dropdown-divider" /></li>
 				<li class="nav-item">
-					<a class="nav-link" href="{{ path('app_show_archived_weekly_menu') }}"
-						>Archive menus hebdomadaire</a
-					>
+					<a class="nav-link" href="{{ path('app_pantry_item_index') }}">
+						<i class="fas fa-box"></i> Mon stock
+					</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="{{ path('app_pantry_item_index') }}"
-						>Voir mon stock</a
-					>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="{{ path('app_user_preferences') }}"
-						>Mon profil</a
-					>
+					<a class="nav-link" href="{{ path('app_user_preferences') }}">
+						<i class="fas fa-user"></i> Mon profil
+					</a>
 				</li>
 			</ul>
 			<div class="mt-auto">
 				<ul class="navbar-nav flex-column">
 					{% if app.user %}
 					<li class="nav-item">
-						<a class="nav-link" href="{{ path('security.logout') }}"
-							>Déconnexion</a
-						>
+						<a class="nav-link" href="{{ path('security.logout') }}">
+							<i class="fas fa-sign-out-alt"></i> Déconnexion
+						</a>
 					</li>
 					{% else %}
 					<li class="nav-item">
-						<a class="nav-link" href="{{ path('security.login') }}"
-							>Connexion</a
-						>
+						<a class="nav-link" href="{{ path('security.login') }}">
+							<i class="fas fa-sign-in-alt"></i> Connexion
+						</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="{{ path('security.registration') }}"
-							>Inscription</a
-						>
+						<a class="nav-link" href="{{ path('security.registration') }}">
+							<i class="fas fa-user-plus"></i> Inscription
+						</a>
 					</li>
 					{% endif %}
 				</ul>

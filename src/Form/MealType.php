@@ -16,6 +16,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Bundle\SecurityBundle\Security;
 use Doctrine\ORM\EntityRepository;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class MealType extends AbstractType
 {
@@ -37,7 +38,7 @@ class MealType extends AbstractType
             ])
             ->add('description', TextareaType::class, [
                 'label' => 'Préparation',
-                'required' => true,
+                'required' => false,
                 'attr' => [
                     'id' => 'quill-editor',
                 ],
@@ -50,9 +51,11 @@ class MealType extends AbstractType
                 'label' => 'Temps de préparation en minutes',
                 'required' => true,
             ])
-            ->add('imageFile', FileType::class, [
-                'label' => 'Image (JPEG, PNG)',
+            ->add('imageFile', VichImageType::class, [
                 'required' => false,
+                'allow_delete' => false,
+                'download_uri' => false,
+                'image_uri' => false,
             ])
             ->add('categories', EntityType::class, [
                 'class' => Categorie::class,
@@ -105,14 +108,17 @@ class MealType extends AbstractType
                     'portion' => 'portion',
                     'tranche' => 'tranche',
                     'piece' => 'piece',
-                    'cuillère à soupe' => 'cas',
-                    'cuillère à café' => 'cac',
+                    'cas' => 'cas',
+                    'cac' => 'cac',
                     'tasse' => 'tasse',
                     'verre' => 'verre',
                     'bol' => 'bol',
                 ],
             ])
             ->add('ingredients_data', HiddenType::class, [
+                'mapped' => false,
+            ])
+            ->add('existing_ingredients_data', HiddenType::class, [
                 'mapped' => false,
             ])
             ->add('MealType', ChoiceType::class, [

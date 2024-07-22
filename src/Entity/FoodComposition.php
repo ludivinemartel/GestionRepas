@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\FoodCompositionRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: FoodCompositionRepository::class)]
@@ -27,6 +29,14 @@ class FoodComposition
 
     #[ORM\Column(nullable: true)]
     private ?float $carbohydrate = null;
+
+    #[ORM\OneToMany(targetEntity: Ingredient::class, mappedBy: 'foodComposition')]
+    private Collection $ingredients;
+
+    public function __construct()
+    {
+        $this->ingredients = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -89,6 +99,32 @@ class FoodComposition
     public function setCarbohydrate(?float $carbohydrate): static
     {
         $this->carbohydrate = $carbohydrate;
+
+        return $this;
+    }
+
+    public function getIngredients(): Collection
+    {
+        return $this->ingredients;
+    }
+
+    public function addIngredient(Ingredient $ingredient): static
+    {
+        if (!$this->ingredients->contains($ingredient)) {
+            $this->ingredients->add($ingredient);
+            $ingredient->setFoodComposition($this);
+        }
+
+        return $this;
+    }
+
+    public function removeIngredient(Ingredient $ingredient): static
+    {
+        if ($this->ingredients->removeElement($ingredient)) {
+            if ($ingredient->getFoodComposition() === $this) {
+                $ingredient->setFoodComposition(null);
+            }
+        }
 
         return $this;
     }

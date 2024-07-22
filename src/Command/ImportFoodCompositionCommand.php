@@ -39,7 +39,6 @@ class ImportFoodCompositionCommand extends Command
         $csv->setHeaderOffset(0);
         $headers = $csv->getHeader();
 
-        // Imprimez les en-têtes pour vérification
         $output->writeln('CSV Headers: ' . implode(', ', $headers));
 
         $records = $csv->getRecords();

@@ -27,13 +27,19 @@ class IngredientType extends AbstractType
                 'label' => 'Unité de mesure',
                 'mapped' => false,
                 'choices' => [
-                    '' => '',
+                    'g' => 'g',
                     'ml' => 'ml',
                     'cl' => 'cl',
-                    'dl' => 'dl',
                     'l' => 'l',
-                    'g' => 'g',
                     'kg' => 'kg',
+                    'portion' => 'portion',
+                    'tranche' => 'tranche',
+                    'piece' => 'piece',
+                    'cas' => 'cas',
+                    'cac' => 'cac',
+                    'tasse' => 'tasse',
+                    'verre' => 'verre',
+                    'bol' => 'bol',
                 ]
             ]);
     }

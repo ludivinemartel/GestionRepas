@@ -39,6 +39,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\NotNull()]
     private array $roles = [];
 
+
+    #[ORM\OneToMany(targetEntity: Categorie::class, mappedBy: 'user')]
+    private Collection $categories;
+
     /**
      * @var string The hashed password
      */
@@ -51,7 +55,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Meal>
      */
-    #[ORM\OneToMany(targetEntity: Meal::class, mappedBy: 'Users')]
+    #[ORM\OneToMany(targetEntity: Meal::class, mappedBy: 'user')]
     private Collection $meals;
 
     /**
@@ -67,7 +71,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $pantryItems;
 
     #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
-    private ?UserPreference $UserPreference = null;
+    private ?UserPreference $userPreference = null;
 
     public function __construct()
     {
@@ -281,17 +285,44 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getUserPreference(): ?UserPreference
     {
-        return $this->UserPreference;
+        return $this->userPreference;
     }
 
     public function setUserPreference(?UserPreference $UserPreference): static
     {
-        $this->UserPreference = $UserPreference;
+        $this->userPreference = $UserPreference;
 
         // set (or unset) the owning side of the relation if necessary
         $newUser = $UserPreference === null ? null : $this;
         if ($newUser !== $UserPreference->getUser()) {
             $UserPreference->setUser($newUser);
+        }
+
+        return $this;
+    }
+
+
+    public function getCategories(): Collection
+    {
+        return $this->categories;
+    }
+
+    public function addCategory(Categorie $category): static
+    {
+        if (!$this->categories->contains($category)) {
+            $this->categories->add($category);
+            $category->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCategory(Categorie $category): static
+    {
+        if ($this->categories->removeElement($category)) {
+            if ($category->getUser() === $this) {
+                $category->setUser(null);
+            }
         }
 
         return $this;

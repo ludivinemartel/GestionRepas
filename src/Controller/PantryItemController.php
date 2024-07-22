@@ -17,13 +17,16 @@ use Symfony\Component\Routing\Annotation\Route;
 class PantryItemController extends AbstractController
 {
     #[Route('/', name: 'app_pantry_item_index', methods: ['GET'])]
-    public function index(PantryItemRepository $pantryItemRepository, PantryItemCategoryRepository $categoryRepository): Response
+    public function index(PantryItemRepository $pantryItemRepository): Response
     {
-        $categories = $categoryRepository->findBy(['User' => $this->getUser()], ['position' => 'ASC']);
-        $pantryItems = $pantryItemRepository->findBy(['user' => $this->getUser()]);
+        $user = $this->getUser();
+        $userPreference = $user->getUserPreference();
+        $selectedCategories = $userPreference ? $userPreference->getStockCategories() : [];
+
+        $pantryItems = $pantryItemRepository->findBy(['user' => $user]);
 
         return $this->render('pantry_item/index.html.twig', [
-            'categories' => $categories,
+            'selected_categories' => $selectedCategories,
             'pantry_items' => $pantryItems,
         ]);
     }
@@ -31,12 +34,17 @@ class PantryItemController extends AbstractController
     #[Route('/new', name: 'app_pantry_item_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        $user = $this->getUser();
+        $userPreference = $user->getUserPreference();
+        $selectedCategories = $userPreference ? $userPreference->getStockCategories() : [];
+
         $pantryItem = new PantryItem();
-        $form = $this->createForm(PantryItemType::class, $pantryItem);
+        $form = $this->createForm(PantryItemType::class, $pantryItem, [
+            'categories' => $selectedCategories,
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $user = $this->getUser();
             $pantryItem->setUser($user);
 
             $entityManager->persist($pantryItem);
@@ -54,7 +62,13 @@ class PantryItemController extends AbstractController
     #[Route('/{id}/edit', name: 'app_pantry_item_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, PantryItem $pantryItem, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(PantryItemType::class, $pantryItem);
+        $user = $this->getUser();
+        $userPreference = $user->getUserPreference();
+        $selectedCategories = $userPreference ? $userPreference->getStockCategories() : [];
+
+        $form = $this->createForm(PantryItemType::class, $pantryItem, [
+            'categories' => $selectedCategories,
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

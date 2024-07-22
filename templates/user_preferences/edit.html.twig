@@ -22,6 +22,39 @@
 		{{ form_errors(form.palette) }}
 	</div>
 
+	<div class="form-group">
+		{{ form_label(form.numberOfAdults) }}
+		{{ form_widget(form.numberOfAdults, { attr: { class: "form-control" } }) }}
+		{{ form_errors(form.numberOfAdults) }}
+	</div>
+
+	<div class="form-group">
+		{{ form_label(form.numberOfChildren) }}
+		{{
+			form_widget(form.numberOfChildren, { attr: { class: "form-control" } })
+		}}
+		{{ form_errors(form.numberOfChildren) }}
+	</div>
+
+	<div class="form-group">
+		{{ form_label(form.diet) }}
+		{{ form_widget(form.diet, { attr: { class: "form-control" } }) }}
+		{{ form_errors(form.diet) }}
+	</div>
+
+	<div>
+		{{ form_label(form.stockCategories) }}
+		{% for child in form.stockCategories %}
+		<div class="form-check">
+			{{ form_widget(child) }}
+			<label class="form-check-label">
+				{{ child.vars.label }}
+			</label>
+		</div>
+		{% endfor %}
+		{{ form_errors(form.stockCategories) }}
+	</div>
+
 	<button class="btn btn-primary">
 		{{ button_label|default('Enregistrer') }}
 	</button>

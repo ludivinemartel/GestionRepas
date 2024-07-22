@@ -22,11 +22,11 @@ class Ingredient
     #[ORM\Column(length: 50)]
     private ?string $Mesure = null;
 
-    #[ORM\ManyToOne(inversedBy: 'Ingredients')]
+    #[ORM\ManyToOne(inversedBy: 'Ingredients', cascade: ['persist'])]
     private ?Meal $meal = null;
 
-    #[ORM\ManyToOne(inversedBy: 'ingredients')]
-    private ?FoodComposition $foodComposition_id = null;
+    #[ORM\ManyToOne(targetEntity: FoodComposition::class, inversedBy: 'ingredients')]
+    private ?FoodComposition $foodComposition = null;
 
     public function getId(): ?int
     {
@@ -81,14 +81,14 @@ class Ingredient
         return $this;
     }
 
-    public function getFoodCompositionId(): ?FoodComposition
+    public function getFoodComposition(): ?FoodComposition
     {
-        return $this->foodComposition_id;
+        return $this->foodComposition;
     }
 
-    public function setFoodCompositionId(?FoodComposition $foodComposition_id): static
+    public function setFoodComposition(?FoodComposition $foodComposition): static
     {
-        $this->foodComposition_id = $foodComposition_id;
+        $this->foodComposition = $foodComposition;
 
         return $this;
     }
